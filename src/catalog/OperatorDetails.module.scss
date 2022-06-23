@@ -1,0 +1,15 @@
+.details {
+  background-color: var(--colorListBg);
+  border: 1px inset var(--colorListBorder);
+  color: var(--colorListText);
+  margin: 0 8px 8px 8px;
+  padding: 8px 12px;
+  user-select: none;
+  overflow-y: auto;
+  flex: 2 1 0;
+  font-size: 14px;
+
+  > p:first-child {
+    margin-top: 0;
+  }
+}

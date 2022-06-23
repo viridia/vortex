@@ -1,0 +1,40 @@
+.catalog {
+  background-color: var(--colorListBg);
+  border: 1px inset var(--colorListBorder);
+  color: var(--colorListText);
+  margin: 8px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  overflow-y: scroll;
+  flex: 3 1 0;
+}
+
+.row {
+  display: flex;
+  flex-shrink: 0;
+  padding: 0 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--colorListBgHover);
+  }
+
+  &.selected {
+    background-color: var(--colorListBgSelected);
+  }
+}
+
+.rowGroup {
+  min-width: 5em;
+  padding-right: 8px;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowName {
+  width: 70%;
+  font-weight: bold;
+}

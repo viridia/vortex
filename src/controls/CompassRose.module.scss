@@ -1,0 +1,82 @@
+$arrowWidth: 24px;
+$compassWidth: 90px;
+$centerWidth: 16px;
+$margin: 16px;
+
+.compass {
+  position: absolute;
+  right: $margin;
+  bottom: $margin;
+  width: $compassWidth;
+  height: $compassWidth;
+  font-family: sans-serif;
+
+  > .arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0.3;
+
+    &:hover {
+      opacity: 0.6;
+    }
+
+    &.active {
+      opacity: 0.9;
+    }
+
+    &.north {
+      top: 0;
+      left: calc(($compassWidth - $arrowWidth) / 2);
+      border-bottom: $arrowWidth solid white;
+      border-left: calc($arrowWidth / 2) solid transparent;
+      border-right: calc($arrowWidth / 2) solid transparent;
+    }
+
+    &.east {
+      top: calc(($compassWidth - $arrowWidth) / 2);
+      right: 0;
+      border-left: $arrowWidth solid white;
+      border-top: calc($arrowWidth / 2) solid transparent;
+      border-bottom: calc($arrowWidth / 2) solid transparent;
+    }
+
+    &.south {
+      bottom: 0;
+      left: calc(($compassWidth - $arrowWidth) / 2);
+      border-top: $arrowWidth solid white;
+      border-left: calc($arrowWidth / 2) solid transparent;
+      border-right: calc($arrowWidth / 2) solid transparent;
+    }
+
+    &.west {
+      left: 0;
+      top: calc(($compassWidth - $arrowWidth) / 2);
+      border-right: $arrowWidth solid white;
+      border-top: calc($arrowWidth / 2) solid transparent;
+      border-bottom: calc($arrowWidth / 2) solid transparent;
+    }
+  }
+
+}
+
+.center {
+  position: absolute;
+  width: $centerWidth;
+  height: $centerWidth;
+  background-color: white;
+  border-radius: 50%;
+  border: none;
+  left: calc(($compassWidth - $centerWidth) / 2);
+  top: calc(($compassWidth - $centerWidth) / 2);
+  opacity: 0.3;
+  outline: none;
+
+  &:hover {
+    opacity: 0.6;
+  }
+
+  &.active {
+    opacity: 0.9;
+  }
+}

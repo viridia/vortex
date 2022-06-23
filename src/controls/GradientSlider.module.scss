@@ -1,0 +1,65 @@
+.slider {
+  display: inline-block;
+  position: relative;
+  border: 1px solid var(--colorButtonBorder);
+  height: 20px;
+  border-radius: 10px;
+  min-width: 64px;
+  overflow: hidden;
+  user-select: none;
+
+  &[class~=disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  > .left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10px;
+    bottom: 0;
+  }
+
+  > .middle {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    right: 10px;
+    bottom: 0;
+  }
+
+  > .right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 10px;
+  }
+}
+
+.track {
+  position: absolute;
+  left: 4px;
+  right: 17px;
+  top: 0;
+  bottom: 0;
+  > .thumb {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 4px;
+    bottom: 4px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #000;
+  }
+}

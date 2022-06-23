@@ -1,0 +1,47 @@
+.terminal {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  width: 15px;
+  height: 30px;
+  cursor: cell;
+  z-index: 12;
+}
+
+.disc {
+  width: 8px;
+  height: 12px;
+  border: 2px solid black;
+  background-image: linear-gradient(0deg, rgb(109, 109, 173) 0%, #557 20%, rgb(170, 170, 170) 100%);
+  z-index: 5;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+
+  .active > & {
+    background-image: linear-gradient(0deg, #8cf 0%, #668c75 20%, #b7d2b7 100%);
+  }
+
+  .in > & {
+    border-radius: 4px 0 0 4px;
+    border-right-width: 0;
+  }
+
+  .out > & {
+    border-radius: 0 4px 4px 0;
+    border-left-width: 0;
+  }
+}
+
+.caption {
+  position: absolute;
+  color: var(--colorTerminalCaption);
+  text-shadow: 1px 2px 1px black;
+
+  .in > & {
+    right: 20px;
+  }
+
+  .out > & {
+    left: 14px;
+  }
+}

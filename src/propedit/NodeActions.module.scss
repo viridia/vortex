@@ -1,0 +1,13 @@
+.nodeActions {
+  display: flex;
+  margin: 4px 4px 0 4px;
+
+  [class~='spacer'] {
+    flex: 1;
+  }
+
+  > button {
+    border-collapse: collapse;
+    padding: 0 10px;
+  }
+}

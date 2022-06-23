@@ -1,0 +1,138 @@
+@keyframes overlayEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlayExit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes contentEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes contentExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+
+.frame {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99;
+}
+
+.header {
+  padding: 8px 12px;
+  font-weight: bold;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  flex: 1 1 auto;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 12px 0 12px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+
+  > * {
+    margin-left: 8px;
+    margin-bottom: 12px;
+  }
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(50, 50, 70, 0.7);
+  opacity: 0;
+  z-index: 98;
+
+  [class~='entering'] > &,
+  [class~='entered'] > & {
+    animation: 300ms ease 1 forwards overlayEnter;
+  }
+
+  [class~='exited'] > &,
+  [class~='exiting'] > & {
+    animation: 300ms ease 1 forwards overlayExit;
+  }
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: var(--colorModalBg);
+  box-shadow: 0px 1px 8px 1px var(--colorModalShadow);
+  border: 1px solid var(--colorModalBorder);
+  color: var(--colorModalText);
+  min-width: 10rem;
+  min-height: 3rem;
+  max-width: 95%;
+  max-height: 95%;
+  border-radius: 5px;
+  padding: 0;
+  opacity: 0;
+  z-index: 100;
+
+  [class~='entering'] > &,
+  [class~='entered'] > & {
+    animation: 300ms ease forwards contentEnter;
+  }
+
+  [class~='exited'] > &,
+  [class~='exiting'] > & {
+    animation: 300ms ease forwards contentExit;
+  }
+
+  > * {
+    border-top: 1px solid var(--colorModalSepLight);
+    border-bottom: 1px solid var(--colorModalSepDark);
+    &:first-child {
+      border-top: none;
+    }
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}

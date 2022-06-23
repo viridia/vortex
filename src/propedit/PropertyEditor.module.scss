@@ -1,0 +1,42 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex: 1 1 0;
+  padding: 0 4px 8px 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  > header {
+    text-align: center;
+    font-weight: bold;
+  }
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  background-color: var(--colorParamGroupBg);
+  border: 1px solid var(--colorParamGroupBorder);
+  border-radius: 8px;
+
+  > header {
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: var(--colorParamGroupHeaderBg);
+    justify-content: center;
+    border-bottom: 1px solid var(--colorParamGroupSep);
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    padding: 4px 12px;
+    overflow: hidden;
+    user-select: none;
+  }
+}

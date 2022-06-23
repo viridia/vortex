@@ -1,0 +1,34 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  align-items: stretch;
+  padding-bottom: 1px;
+}
+
+.stopSlider {
+  margin: 6px 4px 0 4px;
+  border-radius: 6px;
+  border: 1px solid var(--colorParamGroupSep)
+}
+
+.colorStops {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.gradient {
+  position: relative;
+  height: 24px;
+  border-bottom: 1px solid var(--colorParamGroupSep);
+  border-top: none;
+  user-select: none;
+  -webkit-user-select: none;
+  margin: 4px 8px 2px 8px;
+}
+
+.stopSelector {
+  display: flex;
+  padding: 4px;
+}

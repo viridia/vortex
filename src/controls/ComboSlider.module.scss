@@ -1,0 +1,101 @@
+.comboSlider {
+  display: inline-flex;
+  position: relative;
+  align-items: stretch;
+  position: relative;
+  border-bottom: 1px solid var(--colorParamGroupSep);
+  height: 24px;
+  min-width: 64px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+
+  &:first-child {
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+  }
+
+  &:last-child {
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom: none;
+  }
+
+  &.textActive > .center {
+    > .name,
+    > .value {
+      display: none;
+    }
+
+    > input {
+      display: block;
+    }
+  }
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  &:after {
+    position: relative;
+    font-size: 12px;
+    line-height: 24px;
+    color: var(--colorComboArrowIcon);
+  }
+
+  &:active:after {
+    color: var(--colorComboArrowIconActive);
+  }
+
+  &:hover {
+    background-color: var(--colorComboArrowBgHover);
+  }
+}
+
+.arrowLeft {
+  &:after {
+    content: '\25c0';
+  }
+}
+
+.arrowRight {
+  &:after {
+    content: '\25b6';
+  }
+}
+
+.container {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.name {
+  color: var(--colorComboName);
+  margin-right: 4px;
+}
+
+.value {
+  color: var(--colorComboValue);
+}
+
+.input {
+  display: none;
+  background-color: transparent;
+  position: absolute;
+  text-align: center;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  border: none;
+}

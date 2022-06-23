@@ -1,0 +1,42 @@
+.graph {
+  position: relative;
+  flex: 1;
+  background-color: var(--colorGraphBg);
+  background-image: linear-gradient(
+      45deg,
+      var(--colorGraphBgSquares) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--colorGraphBgSquares) 75%,
+      var(--colorGraphBgSquares)
+    ),
+    linear-gradient(
+      45deg,
+      var(--colorGraphBgSquares) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--colorGraphBgSquares) 75%,
+      var(--colorGraphBgSquares)
+    );
+  background-size: 50px 50px;
+  background-position: 0 0, 25px 25px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  user-select: none;
+  overflow: hidden;
+}
+
+.graphScroll {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+
+.graphScrollContent {
+  position: 'absolute';
+  left: 0;
+  top: 0;
+}

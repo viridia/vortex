@@ -1,0 +1,40 @@
+.connector {
+  stroke-width: 3px;
+  stroke: var(--colorConnectorStroke);
+  fill: transparent;
+  cursor: move;
+
+  .pending & {
+    stroke: var(--colorConnectorStrokePending);
+  }
+
+  g.vectorType > & {
+    stroke: var(--colorConnectorStrokeVector);
+    stroke-width: 4px;
+  }
+
+  g.vectorType.pending > & {
+    stroke: var(--colorConnectorStrokeVectorPending);
+  }
+}
+
+.shadow {
+  stroke-width: 6px;
+  stroke: var(--colorConnectorStrokeShadow);
+  fill: transparent;
+  opacity: 0.2;
+
+  g.vectorType > & {
+    stroke-width: 7px;
+  }
+}
+
+.outline {
+  stroke-width: 6px;
+  stroke: var(--colorConnectorStrokeOutline);
+  fill: transparent;
+
+  g.vectorType > & {
+    stroke-width: 7px;
+  }
+}

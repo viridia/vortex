@@ -1,0 +1,31 @@
+.modal {
+  height: 95%;
+}
+
+.scroll {
+  flex: 1 1 70vh;
+  font-family: monospace;
+  overflow-y: auto;
+  background-color: var(--colorSourceBg);
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  min-width: min(90vw, 30rem);
+  max-width: 95vw;
+}
+
+.table {
+  font-size: 12px;
+  min-height: 0;
+  color: var(--colorSourceText);
+
+  td.index {
+    user-select: none;
+    text-align: right;
+    padding-right: 8px;
+  }
+
+  td.text {
+    white-space: pre;
+  }
+}

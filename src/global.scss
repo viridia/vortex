@@ -1,0 +1,110 @@
+$gray0: #eeeeee;
+$gray1: #dbdbe7;
+$gray2: #ccccdd;
+$gray3: #a8a8af;
+$gray4: #88888f;
+$gray5: #666677;
+$gray6: #44444c;
+
+$gray70: #33333c;
+$gray80: #28282f;
+$gray90: #14141f;
+$gray100: #000;
+
+$coolGray: #99e;
+$coolGray2: #558;
+
+:root {
+  --colorPanelText: #{$gray3};
+  --colorPanelBg: #{$gray80};
+
+  --colorListText: #{$gray2};
+  --colorListBg: #{$gray70};
+  --colorListBgHover: #{$gray6};
+  --colorListBgSelected: #{$coolGray2};
+  --colorListBorder: #{$gray100};
+
+  --colorGraphBg: #{$gray5};
+  --colorGraphBgSquares: #{darken($gray5, 2%)};
+
+  --colorConnectorStroke: #47b;
+  --colorConnectorStrokePending: rgb(104, 121, 144);
+  --colorConnectorStrokeOutline: #000;
+  --colorConnectorStrokeShadow: #000;
+  --colorConnectorStrokeVector: #4c4;
+  --colorConnectorStrokeVectorPending: rgb(114, 159, 114);
+
+  --colorTerminalCaption: #{$gray0};
+
+  --colorControlBorder: #{$gray6};
+
+  --colorComboBg: #{$gray70};
+  --colorComboBgBar: #{$gray6};
+  --colorComboArrowIcon: #{$gray3};
+  --colorComboArrowIconActive: #{$gray2};
+  --colorComboArrowBgHover: #{lighten($gray70, 3%)};
+  --colorComboName: #{$gray3};
+  --colorComboValue: #{$gray2};
+
+  --colorParamGroupBg: #{$gray6};
+  --colorParamGroupHeaderBg: #{lighten($gray6, 5%)};
+  --colorParamGroupBorder: #{$gray90};
+  --colorParamGroupSep: #{$gray80};
+
+  --colorModalBg: #{$gray80};
+  --colorModalBorder: #{$gray100};
+  --colorModalText: #{$gray2};
+  --colorModalShadow: #{$gray100};
+  --colorModalSepLight: #{$gray6};
+  --colorModalSepDark: #{$gray100};
+
+  --colorButtonText: #{$gray3};
+  --colorButtonTextDisabled: #{$gray5};
+  --colorButtonBorder: #{$gray100};
+  --buttonBg: #{linear-gradient(to bottom, lighten($gray6, 5%), darken($gray6, 8%))};
+  --buttonBgActive: #{linear-gradient(to bottom, lighten($gray70, 10%), darken($gray6, 10%))};
+  --buttonBgSelected: #{linear-gradient(to bottom, lighten($coolGray2, 1%), darken($coolGray2, 1%))};
+
+  --colorSourceBg: #{$gray70};
+  --colorSourceText: #{$gray2};
+
+  --colorHexBg: #{$gray6};
+  --colorHexText: #{$gray2};
+  --colorHexBorder: #{$gray80};
+
+  --colorAlphaPatternLight: #{$gray5};
+  --colorAlphaPatternDark: #{$gray80};
+
+  --colorErrorTextBg: #{$gray70};
+}
+
+body {
+  overscroll-behavior-x: none;
+}
+
+.rounded-scrollbars::-webkit-scrollbar {
+  background-color: transparent;
+  width: 7px;
+  height: 7px;
+}
+
+.rounded-scrollbars::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+}
+
+.rounded-scrollbars::-webkit-scrollbar-thumb:window-inactive {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.rounded-scrollbars::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+/*
+export const colors = {
+  connectorStroke: '#47b',
+  connectorOutlineStroke: '#000',
+  connectorShadowStroke: '#000',
+  connectorStrokeVector: '#4c4',
+}; */

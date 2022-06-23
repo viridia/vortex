@@ -1,0 +1,32 @@
+.dragger {
+  position: absolute;
+  bottom: -10px;
+  z-index: 10;
+  cursor: pointer;
+
+  > svg {
+    position: relative;
+    left: -8px;
+
+    > path {
+      stroke: #000;
+      stroke-width: 1px;
+      stroke-linejoin: round;
+    }
+  }
+
+  :focus &.selected > .swatch {
+    border-color: #fff;
+  }
+}
+
+.swatch {
+  position: absolute;
+  background-color: red;
+  border-radius: 1px;
+  width: 7px;
+  height: 8px;
+  border: 1px solid black;
+  left: -4px;
+  top: 10px;
+}

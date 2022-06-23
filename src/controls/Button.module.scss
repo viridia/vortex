@@ -1,0 +1,29 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--colorButtonText);
+  height: 32px;
+  padding: 1px 12px 0 12px;
+  border-radius: 4px;
+  border: 1px solid var(--colorButtonBorder);
+  background-color: black;
+  background-image: var(--buttonBg);
+  font-family: 'PT Sans', sans-serif;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+
+  &:active {
+    background-image: var(--buttonBgActive);
+  }
+
+  &[class~='selected'] {
+    background-image: var(--buttonBgSelected);
+  }
+
+  &[disabled] {
+    pointer-events: none;
+    color: var(--colorButtonTextDisabled);
+  }
+}

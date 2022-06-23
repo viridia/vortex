@@ -1,0 +1,19 @@
+.main {
+  align-items: stretch;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  font-family: 'PT Sans', sans-serif;
+}
+
+.appBody {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+}

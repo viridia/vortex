@@ -1,0 +1,23 @@
+.panel {
+  background-color: var(--colorPanelBg);
+  color: var(--colorPanelText);
+  display: flex;
+  flex-direction: column;
+  width: 330px;
+  min-height: 0;
+}
+
+.imagePreview {
+  margin: 4px;
+}
+
+.errorDisplay {
+  font-family: monospace;
+  font-size: 11px;
+  height: 300px;
+  margin: 4px 8px 8px 4px;
+  padding: 8px;
+  background-color: var(--colorErrorTextBg);
+  overflow: auto;
+  white-space: pre;
+}

@@ -10,14 +10,13 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  test-tauri:
     strategy:
       matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        platform: [macos-latest, windows-latest]
+        node-version: [16.x, 18.x]
+        
+    runs-on: ${{ matrix.platform }}
 
     steps:
     - uses: actions/checkout@v3

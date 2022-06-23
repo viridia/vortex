@@ -38,7 +38,6 @@ jobs:
     - run: npm ci
     - run: npm run test:compile
     - run: npm run test:lint
-    - run: npm run tauri build
     - uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

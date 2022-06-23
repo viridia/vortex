@@ -6,12 +6,14 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "test:compile": "tsc --noEmit"
   },
   "license": "MIT",
   "devDependencies": {
     "@tauri-apps/cli": "^1.0.0",
     "@types/marked": "^4.0.3",
+    "@types/node": "^18.0.0",
     "prettier": "^2.7.1",
     "sass": "^1.52.1",
     "typescript": "^4.6.4",

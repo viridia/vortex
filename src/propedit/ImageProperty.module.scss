@@ -1,0 +1,14 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  margin: 4px 2px;
+  flex-shrink: 0;
+}
+
+.upload {
+  align-self: stretch;
+}
+
+.noImage {
+  font-style: italic;
+}

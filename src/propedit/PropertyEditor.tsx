@@ -3,6 +3,7 @@ import { Graph, GraphNode } from '../graph';
 import { DataType, Parameter } from '../operators';
 import { ColorGradientProperty } from './ColorGradientProperty';
 import { ColorProperty } from './ColorProperty';
+import { ImageProperty } from './ImageProperty';
 import styles from './PropertyEditor.module.scss';
 import { ScalarProperty } from './ScalarProperty';
 
@@ -52,24 +53,6 @@ export function PropertyEditor({ node, graph }: Props) {
     return result;
   });
 
-  // TODO
-  // function makeGroups(params: Parameter[]) {
-  //   params.forEach(param => {
-  //     } else if (param.type === DataType.IMAGE) {
-  //       if (group.length > 0) {
-  //         children.push(<section class={styles.group}>{group}</section>);
-  //       }
-  //       children.push(<ImageProperty key={param.id} graph={graph} node={node} parameter={param} />);
-  //       group = [];
-  //     } else {
-  //       if (group.length > 0) {
-  //         children.push(<PropertyGroup key={groupKey()}>{group}</PropertyGroup>);
-  //         group = [];
-  //       }
-  //     }
-  //   });
-  // }
-
   return (
     <section class={styles.editor} classList={{ 'rounded-scrollbars': true }}>
       <header>{node.name}</header>
@@ -81,7 +64,7 @@ export function PropertyEditor({ node, graph }: Props) {
             </Show>
             <For each={group.children}>
               {param => (
-                <Switch>
+                <Switch fallback={<div>Unsupported param type: {param.type}</div>}>
                   <Match when={param.type === DataType.FLOAT || param.type === DataType.INTEGER}>
                     <ScalarProperty graph={graph} node={node} parameter={param} />
                   </Match>
@@ -90,6 +73,9 @@ export function PropertyEditor({ node, graph }: Props) {
                   </Match>
                   <Match when={param.type === DataType.RGBA_GRADIENT}>
                     <ColorGradientProperty graph={graph} node={node} parameter={param} />
+                  </Match>
+                  <Match when={param.type === DataType.IMAGE}>
+                    <ImageProperty graph={graph} node={node} parameter={param} />
                   </Match>
                 </Switch>
               )}

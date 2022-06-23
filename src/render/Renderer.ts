@@ -155,7 +155,7 @@ export class Renderer {
 
   // Render a node with the specified renderer.
   public renderNode(node: GraphNode): void {
-    const program: WebGLProgram = node.glResources?.program!;
+    const program: WebGLProgram = node.glResources?.program;
     if (program) {
       this.executeShaderProgram(node, gl => {
         // Set the uniforms for this node and all upstream nodes.

@@ -36,7 +36,7 @@ export abstract class Operator {
 
   /** Locate an operator input by id. */
   public getInput(id: string): Input {
-    const result = this.inputs && this.inputs.find(i => i.id === id);
+    const result = this.inputs?.find(i => i.id === id);
     if (!result) {
       throw Error(`Operator input not found: ${this.id}:${id}`);
     }
@@ -45,7 +45,7 @@ export abstract class Operator {
 
   /** Locate an operator output by id. */
   public getOutput(id: string): Output {
-    const result = this.outputs && this.outputs.find(i => i.id === id);
+    const result = this.outputs?.find(i => i.id === id);
     if (!result) {
       throw Error(`Operator outputs not found: ${this.id}:${id}`);
     }

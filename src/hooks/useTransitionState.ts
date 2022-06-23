@@ -33,7 +33,7 @@ export const useTransitionState = (props: Props): (() => TransitionState) => {
         () => {
           if (st === 'exiting') {
             setState('exited');
-            onExited && onExited();
+            onExited?.();
           } else if (st === 'entering') {
             setState('entered');
           }

@@ -244,7 +244,7 @@ export const fork = (value: Expr, name: string): ForkExpr => ({
   kind: 'fork',
   value,
   name,
-  key: Symbol(),
+  key: Symbol('expr'),
   type: value.type,
 });
 

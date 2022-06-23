@@ -109,7 +109,7 @@ export function transform(expr: Expr, out: Expr[]): void {
           // Generate a temporary variable.
           const tmpVarDef = defLocal(`${outputTerminal.id}${tmpVarIndex}`, retVal.type, retVal);
           const tmpVarRef = refLocal(tmpVarDef.name, retVal.type);
-          const key = Symbol();
+          const key = Symbol('tmpVar');
           tmpVarMap.set(key, tmpVarRef);
           out.push(tmpVarDef);
           signalList.push({ fragCoords, expr: tmpVarRef });

@@ -9,7 +9,7 @@ export class GLResources {
   public fragment: WebGLShader | null = null;
   public textures = createMap<string, WebGLTexture>();
 
-  private textureIndex: number = 0;
+  private textureIndex = 0;
 
   public resetTextureIndex() {
     this.textureIndex = 0;

@@ -20,7 +20,7 @@ interface PropertyGroup {
 export function PropertyEditor({ node, graph }: Props) {
   const groups = createMemo(() => {
     const result: PropertyGroup[] = [];
-    let currentGroup: PropertyGroup | undefined = undefined;
+    let currentGroup: PropertyGroup | undefined;
 
     function walkGroups(params: Parameter[]) {
       params.forEach(param => {

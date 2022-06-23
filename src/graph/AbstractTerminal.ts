@@ -9,7 +9,7 @@ export class AbstractTerminal implements Terminal {
   public readonly y: number;
   public readonly name: string;
   public readonly output: boolean;
-  public hover: boolean = false;
+  public hover = false;
 
   constructor(node: GraphNode, name: string, id: string, x: number, y: number, output = false) {
     makeObservable(this, ['hover']);

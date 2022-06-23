@@ -18,8 +18,8 @@ export class Graph {
   public path: string | null = null;
   public nodes: ReadonlyArray<GraphNode> = [];
   public bounds = new Bounds();
-  public modified: boolean = false;
-  public loaded: boolean = false;
+  public modified = false;
+  public loaded = false;
 
   private nodeCount = 0;
 
@@ -58,12 +58,12 @@ export class Graph {
   /** Locate a terminal by id. */
   public findTerminal(nodeId: number | string, terminalId: string): Terminal | undefined {
     const node = this.findNode(nodeId);
-    return node && node.findTerminal(terminalId);
+    return node?.findTerminal(terminalId);
   }
 
   public findInputTerminal(nodeId: number | string, terminalId: string): InputTerminal | undefined {
     const node = this.findNode(nodeId);
-    return node && node.findInputTerminal(terminalId);
+    return node?.findInputTerminal(terminalId);
   }
 
   public findOutputTerminal(
@@ -71,7 +71,7 @@ export class Graph {
     terminalId: string
   ): OutputTerminal | undefined {
     const node = this.findNode(nodeId);
-    return node && node.findOutputTerminal(terminalId);
+    return node?.findOutputTerminal(terminalId);
   }
 
   public connect(

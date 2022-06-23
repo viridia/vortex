@@ -326,7 +326,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
     const gr = graph();
     const ts = sourceId ? gr.findOutputTerminal(sourceId[0], sourceId[1]) : undefined;
     const te = sinkId ? gr.findInputTerminal(sinkId[0], sinkId[1]) : undefined;
-    const connection = te && te.connection;
+    const connection = te?.connection;
 
     if (ts && te && connection) {
       const svgDoc = e.currentTarget.parentNode as SVGSVGElement;

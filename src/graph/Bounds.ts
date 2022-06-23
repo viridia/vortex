@@ -5,11 +5,7 @@ export class Bounds {
   public yMin: number;
   public yMax: number;
 
-  constructor(
-      xMin: number = Infinity,
-      yMin: number = Infinity,
-      xMax: number = -Infinity,
-      yMax: number = -Infinity) {
+  constructor(xMin = Infinity, yMin = Infinity, xMax = -Infinity, yMax = -Infinity) {
     this.xMin = xMin;
     this.xMax = xMax;
     this.yMin = yMin;
@@ -37,12 +33,12 @@ export class Bounds {
 
   /** True if the given point is within the bounds or on the edge. */
   public contains(x: number, y: number): boolean {
-    return (x >= this.xMin && x < this.xMax && y >= this.yMin && y <= this.yMax);
+    return x >= this.xMin && x < this.xMax && y >= this.yMin && y <= this.yMax;
   }
 
   /** True if this bounds overlaps with another bounds. */
   public overlaps(b: Bounds): boolean {
-    return (b.xMax > this.xMin && b.xMin < this.xMax && b.yMax > this.yMin && b.yMin <= this.yMax);
+    return b.xMax > this.xMin && b.xMin < this.xMax && b.yMax > this.yMin && b.yMin <= this.yMax;
   }
 
   /** Expand this bound to include a point. */

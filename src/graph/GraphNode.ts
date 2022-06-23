@@ -18,8 +18,8 @@ import { ColorStop } from '../render/colors';
 /** A node in the graph. */
 export class GraphNode {
   // Node coordinates
-  public x: number = 0;
-  public y: number = 0;
+  public x = 0;
+  public y = 0;
 
   // Node i/o
   public inputs: InputTerminal[] = [];
@@ -29,14 +29,14 @@ export class GraphNode {
   public paramValues = createMap<string, any>();
 
   // Node selection state
-  public selected: boolean = false;
+  public selected = false;
 
   // Preview needs recalculation
   public deleted = false;
 
   // GL resources allocated by the operator for this node.
   public glResources: GLResources | undefined;
-  public prevSource: string = '';
+  public prevSource = '';
 
   // Report errors compiling this node.
   public errorMsg: string | null = null;
@@ -79,11 +79,14 @@ export class GraphNode {
         if (param.default !== undefined) {
           if (param.type === DataType.RGBA_GRADIENT) {
             // Make color stops observable and mutable.
-            this.paramValues.set(param.id, param.default.map(stop => {
-              const result: ColorStop = { ...stop };
-              makeObservable(result, ['position', 'value']);
-              return result;
-            }));
+            this.paramValues.set(
+              param.id,
+              param.default.map(stop => {
+                const result: ColorStop = { ...stop };
+                makeObservable(result, ['position', 'value']);
+                return result;
+              })
+            );
           } else {
             this.paramValues.set(param.id, param.default);
           }
@@ -156,14 +159,14 @@ export class GraphNode {
       @param callback A function which is called for every upstream node. Three arguments are
         passed: the upstream node, and the connection leading to that node.
   */
-  public visitUpstreamNodes(callback: (node: GraphNode, conn: Connection) => boolean | void) {
+  public visitUpstreamNodes(callback: (node: GraphNode, conn: Connection) => boolean | undefined) {
     const visited = new Set<number>();
     const visit = (node: GraphNode): void => {
       if (node.id && !visited.has(node.id)) {
         visited.add(node.id);
         for (const input of node.inputs) {
           const connection = input.connection;
-          if (connection && connection.source) {
+          if (connection?.source) {
             if (callback(connection.source.node, connection) !== false) {
               visit(connection.source.node);
             }
@@ -178,7 +181,9 @@ export class GraphNode {
       Return 'false' from the callback to signal that the visitor should not traverse any
       deeper into the graph.
   */
-  public visitDownstreamNodes(callback: (node: GraphNode, conn: Connection) => boolean | void) {
+  public visitDownstreamNodes(
+    callback: (node: GraphNode, conn: Connection) => boolean | undefined
+  ) {
     const visited = new Set<number>();
     const visit = (node: GraphNode): void => {
       if (node.id && !visited.has(node.id)) {

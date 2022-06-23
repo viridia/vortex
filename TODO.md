@@ -1,21 +1,23 @@
 ## TODO
 
+## MVP
+
+* File menu open / save / save as
 * Fix problem with drag and drop from operator catalog.
-* Fix position combo slider.
-* Add turbulence
+* Add export shader.
 * Add export image
 * Add import image
-* Add save / load of graphs.
-* Add other menus.
-* Add export shader.
+
+## QoL
+
+* Fix position combo slider.
+* Add turbulence
 * Think about making preview image optional on nodes.
-* Make terminals more compact.
 * Automated build and release.
 * Save window size.
 * Save window position.
 * Dropdowns for enum types.
 * ESLint
-* Compilation test.
 
 ## Node types
 

@@ -7,6 +7,7 @@ import { OutputTerminal } from './OutputTerminal';
 import { Terminal } from './Terminal';
 import { makeObservable } from '../lib/makeObservable';
 import { batch } from 'solid-js';
+import { renderer } from '../render/Renderer';
 
 const DOC_WIDTH = 1024;
 const DOC_MARGIN = 256;
@@ -14,7 +15,7 @@ const NODE_WIDTH = 94;
 const NODE_HEIGHT = 120;
 
 export class Graph {
-  public name: string = '';
+  public path: string | null = null;
   public nodes: ReadonlyArray<GraphNode> = [];
   public bounds = new Bounds();
   public modified: boolean = false;
@@ -23,9 +24,13 @@ export class Graph {
   private nodeCount = 0;
 
   constructor() {
-    makeObservable(this, ['name', 'modified', 'nodes', 'loaded']);
+    makeObservable(this, ['path', 'modified', 'nodes', 'loaded']);
     this.nodes = [];
     this.computeBounds();
+  }
+
+  public dispose() {
+    this.nodes.forEach(node => node.dispose(renderer));
   }
 
   /** Add a node to the list. */
@@ -248,7 +253,6 @@ export class Graph {
       });
     });
     return {
-      name: this.name,
       nodes: this.nodes.map(node => node.toJs()),
       connections,
     };
@@ -256,9 +260,6 @@ export class Graph {
 
   public fromJs(json: any, registry: Registry) {
     batch(() => {
-      if (typeof json.name === 'string') {
-        this.name = json.name;
-      }
       json.nodes.forEach((node: any) => {
         const n = new GraphNode(registry.get(node.operator), node.id);
         n.x = node.x;

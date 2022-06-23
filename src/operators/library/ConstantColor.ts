@@ -24,7 +24,7 @@ A constant color.
 `;
 
   constructor() {
-    super('generator', 'Uniform Color', 'gen_constant_color');
+    super('generator', 'Uniform Color', 'gen_color');
   }
 
   public getCode(node: GraphNode): Expr {

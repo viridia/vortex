@@ -1,11 +1,18 @@
-import { Component, createSignal } from 'solid-js';
+import { Component, createEffect, createSignal } from 'solid-js';
 import styles from './App.module.scss';
-import { PageHeader } from './header/PageHeader';
+import { appWindow } from '@tauri-apps/api/window';
 import { CatalogPanel } from './catalog/CatalogPanel';
 import { PropertyPanel } from './propedit/PropertyPanel';
 import { Graph } from './graph';
 import { GraphView } from './graphview/GraphView';
+import { open, save } from '@tauri-apps/api/dialog';
+import { documentDir, dirname } from '@tauri-apps/api/path';
+import { readTextFile, writeFile } from '@tauri-apps/api/fs';
+
 import './global.scss';
+import { registry } from './operators/Registry';
+
+let saveDir = await documentDir();
 
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());
@@ -18,6 +25,88 @@ const App: Component = () => {
         e.stopPropagation();
         graph().deleteSelection();
     }
+  });
+
+  async function doSaveAs() {
+    const filePath = await save({
+      defaultPath: saveDir,
+      filters: [
+        {
+          name: 'Vortex Graph',
+          extensions: ['vtx'],
+        },
+      ],
+    });
+    if (filePath) {
+      saveDir = await dirname(filePath)
+      graph().path = filePath;
+      doSave();
+    }
+  }
+
+  async function doSave() {
+    const gr = graph();
+    await writeFile(gr.path, JSON.stringify(gr.asJson));
+    gr.modified = false;
+  }
+
+  createEffect(() => {
+    appWindow.listen('tauri://menu', async ({ event, payload }) => {
+      const gr = graph();
+      switch (payload) {
+        case 'new': {
+          if (gr.modified) {
+            // Prompt save
+          }
+          gr.dispose();
+          setGraph(new Graph());
+          break;
+        }
+
+        case 'open': {
+          if (gr.modified) {
+            // Prompt save
+          }
+          const openResult = await open({
+            defaultPath: saveDir,
+            multiple: false,
+            filters: [
+              {
+                name: 'Vortex Graph',
+                extensions: ['vtx'],
+              },
+            ],
+          });
+          const filePath = Array.isArray(openResult) ? openResult[0] : openResult;
+          if (filePath) {
+            saveDir = await dirname(filePath)
+            const json = await readTextFile(filePath);
+            if (json) {
+              const parsed = JSON.parse(json);
+              const g = new Graph();
+              g.path = filePath;
+              g.fromJs(parsed, registry);
+              setGraph(g);
+            }
+          }
+          break;
+        }
+
+        case 'save': {
+          if (!gr.path) {
+            doSaveAs();
+          } else {
+            doSave();
+          }
+          break;
+        }
+
+        case 'saveas': {
+          doSaveAs();
+          break;
+        }
+      }
+    });
   });
 
   return (

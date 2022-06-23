@@ -159,7 +159,7 @@ export class GraphNode {
       @param callback A function which is called for every upstream node. Three arguments are
         passed: the upstream node, and the connection leading to that node.
   */
-  public visitUpstreamNodes(callback: (node: GraphNode, conn: Connection) => boolean | undefined) {
+  public visitUpstreamNodes(callback: (node: GraphNode, conn: Connection) => boolean | void) {
     const visited = new Set<number>();
     const visit = (node: GraphNode): void => {
       if (node.id && !visited.has(node.id)) {
@@ -182,7 +182,7 @@ export class GraphNode {
       deeper into the graph.
   */
   public visitDownstreamNodes(
-    callback: (node: GraphNode, conn: Connection) => boolean | undefined
+    callback: (node: GraphNode, conn: Connection) => boolean | void
   ) {
     const visited = new Set<number>();
     const visit = (node: GraphNode): void => {

@@ -2,7 +2,6 @@
 
 ## MVP
 
-* Add export shader.
 * Add export image
 
 ## QoL

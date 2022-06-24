@@ -424,14 +424,12 @@ export class Renderer {
       console.error(err);
     };
 
+    // console.log('setting url', filePath);
     readBinaryFile(filePath).then(imgData => {
       const dataUrl = URL.createObjectURL(new Blob([imgData]));
       image.src = dataUrl;
       URL.revokeObjectURL(dataUrl);
     });
-    // console.log('setting url', filePath);
-    // image.crossOrigin = '';
-    // image.src = `file:/${filePath}`;
   }
 
   private compileShader(type: number, source: string, node?: GraphNode): WebGLShader | null {

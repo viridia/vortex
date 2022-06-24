@@ -24,7 +24,9 @@ export function PropertyEditor({ node, graph }: Props) {
 
     function walkGroups(params: Parameter[]) {
       params.forEach(param => {
-        if (param.type === DataType.GROUP) {
+        if (param.computed) {
+          // Don't display
+        } else if (param.type === DataType.GROUP) {
           // Explict group
           currentGroup = { children: [], title: param.name };
           result.push(currentGroup);

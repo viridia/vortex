@@ -31,7 +31,8 @@ import { createStore } from 'solid-js/store';
 type DragType = 'input' | 'output' | 'node' | null;
 
 interface Props {
-  graph: () => Graph;
+  graph: Graph;
+  ref: (elt: HTMLDivElement) => void;
 }
 
 interface State {
@@ -45,7 +46,7 @@ interface State {
   dragSink: InputTerminal | null;
 }
 
-export const GraphView: Component<Props> = ({ graph }) => {
+export const GraphView: Component<Props> = props => {
   let scrollEl: HTMLDivElement;
   let scrollContentEl: HTMLDivElement;
 
@@ -73,7 +74,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
   let dragSource: OutputTerminal | null = null;
   let dragSink: InputTerminal | null = null;
 
-  const onScroll = (dx: number, dy: number) => {
+  const onChangeScroll = (dx: number, dy: number) => {
     if (scrollEl) {
       scrollEl.scrollBy(-dx, -dy);
     }
@@ -81,13 +82,14 @@ export const GraphView: Component<Props> = ({ graph }) => {
 
   const pickGraphEntity = (x: number, y: number): GraphNode | Terminal | undefined => {
     let elt = document.elementFromPoint(x, y);
+    const graph = props.graph;
     while (elt) {
       if (elt instanceof HTMLElement) {
         if (elt.dataset.terminal) {
-          const node = graph().findNode(Number(elt.dataset.node));
+          const node = graph.findNode(Number(elt.dataset.node));
           return node?.findTerminal(elt.dataset.terminal);
         } else if (elt.dataset.node) {
-          return graph().findNode(Number(elt.dataset.node));
+          return graph.findNode(Number(elt.dataset.node));
         }
       }
       elt = elt.parentElement;
@@ -118,7 +120,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
     const dy = dyScroll();
     if (dx !== 0 || dy !== 0) {
       const timer = window.setInterval(() => {
-        onScroll(-dx * 10, -dy * 10);
+        onChangeScroll(-dx * 10, -dy * 10);
       }, 16);
 
       onCleanup(() => window.clearInterval(timer));
@@ -136,41 +138,42 @@ export const GraphView: Component<Props> = ({ graph }) => {
     }
   };
 
-  const bounds = graph().bounds;
+  // const bounds = props.graph.bounds;
 
-  const onDragEnter: JSX.EventHandler<HTMLElement, DragEvent> = e => {
-    if (e.dataTransfer.types.indexOf('application/x-vortex-operator') >= 0) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'copy';
-    }
-  };
+  // const onDragEnter: JSX.EventHandler<HTMLElement, DragEvent> = e => {
+  //   if (e.dataTransfer.types.indexOf('application/x-vortex-operator') >= 0) {
+  //     e.preventDefault();
+  //     e.dataTransfer.dropEffect = 'copy';
+  //   }
+  // };
 
-  const onDragOver: JSX.EventHandler<HTMLElement, DragEvent> = e => {
-    if (e.dataTransfer.types.indexOf('application/x-vortex-operator') >= 0) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'copy';
-    }
-  };
+  // const onDragOver: JSX.EventHandler<HTMLElement, DragEvent> = e => {
+  //   if (e.dataTransfer.types.indexOf('application/x-vortex-operator') >= 0) {
+  //     e.preventDefault();
+  //     e.dataTransfer.dropEffect = 'copy';
+  //   }
+  // };
 
-  const onDrop: JSX.EventHandler<HTMLElement, DragEvent> = e => {
-    const data = e.dataTransfer.getData('application/x-vortex-operator');
-    if (data) {
-      e.preventDefault();
-      // e.stopPropagation();
-      const gr = graph();
-      gr.clearSelection();
-      const op = registry.get(data);
-      const node = new GraphNode(op, gr.nextId());
-      const rect = e.currentTarget.getBoundingClientRect();
-      node.x = quantize(e.clientX - rect.left + gr.bounds.xMin - 45);
-      node.y = quantize(e.clientY - rect.top + gr.bounds.yMin - 60);
-      node.selected = true;
-      gr.add(node);
-    }
-  };
+  // const onDrop: JSX.EventHandler<HTMLElement, DragEvent> = e => {
+  //   const data = e.dataTransfer.getData('application/x-vortex-operator');
+  //   if (data) {
+  //     e.preventDefault();
+  //     // e.stopPropagation();
+  //     const gr = props.graph;
+  //     gr.clearSelection();
+  //     const op = registry.get(data);
+  //     const node = new GraphNode(op, gr.nextId());
+  //     const rect = e.currentTarget.getBoundingClientRect();
+  //     node.x = quantize(e.clientX - rect.left + gr.bounds.xMin - 45);
+  //     node.y = quantize(e.clientY - rect.top + gr.bounds.yMin - 60);
+  //     node.selected = true;
+  //     gr.add(node);
+  //   }
+  // };
 
   const onPointerDown: JSX.EventHandler<HTMLElement, PointerEvent> = e => {
     e.preventDefault();
+    const graph = props.graph;
     const entity = pickGraphEntity(e.clientX, e.clientY);
     if (entity) {
       if (entity instanceof GraphNode) {
@@ -179,7 +182,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
             entity.selected = !entity.selected;
           } else if (!entity.selected) {
             if (!e.shiftKey) {
-              graph().clearSelection();
+              graph.clearSelection();
             }
             entity.selected = true;
           }
@@ -196,8 +199,8 @@ export const GraphView: Component<Props> = ({ graph }) => {
         }
       } else if (entity instanceof AbstractTerminal) {
         const rect = e.currentTarget.getBoundingClientRect();
-        dragX = e.clientX - rect.left + graph().bounds.xMin;
-        dragY = e.clientY - rect.top + graph().bounds.yMin;
+        dragX = e.clientX - rect.left + graph.bounds.xMin;
+        dragY = e.clientY - rect.top + graph.bounds.yMin;
         setActiveTerminal(null);
         if (isOutputTerminal(entity)) {
           dragSource = entity;
@@ -222,7 +225,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
         });
       }
     } else {
-      graph().clearSelection();
+      graph.clearSelection();
     }
   };
 
@@ -232,7 +235,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
     batch(() => {
       if (dragType() === 'input' || dragType() === 'output') {
         const rect = e.currentTarget.getBoundingClientRect();
-        const gr = graph();
+        const gr = props.graph;
         dragX = e.clientX - rect.left + gr.bounds.xMin;
         dragY = e.clientY - rect.top + gr.bounds.yMin;
 
@@ -280,7 +283,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
           // Math.min(rect.height, Math.max(0, e.clientY - rect.top)) - dragYOffset
         );
       }
-      graph().modified = true;
+      props.graph.modified = true;
     });
 
     updateScrollVelocity(e);
@@ -300,7 +303,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
         }
 
         if (dragSource && dragSink) {
-          graph().connectTerminals(dragSource, dragSink);
+          props.graph.connectTerminals(dragSource, dragSink);
         }
       }
       setDragType(null);
@@ -315,7 +318,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
     dragSink = null;
     dragNode = null;
     pointerId = -1;
-    graph().computeBounds();
+    props.graph.computeBounds();
   };
 
   const onConnectionPointerDown: JSX.EventHandler<SVGElement, PointerEvent> = e => {
@@ -323,7 +326,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
     e.preventDefault();
     const sourceId = e.currentTarget.dataset.source?.split(':', 2);
     const sinkId = e.currentTarget.dataset.sink?.split(':');
-    const gr = graph();
+    const gr = props.graph;
     const ts = sourceId ? gr.findOutputTerminal(sourceId[0], sourceId[1]) : undefined;
     const te = sinkId ? gr.findInputTerminal(sinkId[0], sinkId[1]) : undefined;
     const connection = te?.connection;
@@ -388,36 +391,48 @@ export const GraphView: Component<Props> = ({ graph }) => {
     const edit = editConnection();
     const isNotEditing = (conn: Connection) =>
       !(edit && conn.dest === edit.dest && conn.source === edit.source);
-    return graph()
-      .nodes.map(node => node.outputs.map(output => output.connections.filter(isNotEditing)))
+    return props.graph.nodes
+      .map(node => node.outputs.map(output => output.connections.filter(isNotEditing)))
       .flat(2);
   });
 
+  const viewBox = createMemo(() => {
+    const bounds = props.graph.bounds;
+    return `${bounds.xMin} ${bounds.yMin} ${bounds.width} ${bounds.height}`;
+  });
+
+  const setRef = (element: HTMLDivElement) => {
+    scrollEl = element;
+    props.ref(element);
+  };
+
   return (
     <section class={styles.graph} id="graph">
-      <div classList={{ [styles.graphScroll]: true, 'rounded-scrollbars': true }} ref={scrollEl}>
+      <div classList={{ [styles.graphScroll]: true, 'rounded-scrollbars': true }} ref={setRef}>
         <div
           ref={scrollContentEl}
           class={styles.graphScrollContent}
-          onDragEnter={onDragEnter}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
+          // onDragEnter={onDragEnter}
+          // onDragOver={onDragOver}
+          // onDrop={onDrop}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           style={{
-            width: `${bounds.width}px`,
-            height: `${bounds.height}px`,
+            width: `${props.graph.bounds.width}px`,
+            height: `${props.graph.bounds.height}px`,
           }}
         >
-          <For each={graph().nodes}>{node => <NodeRendition node={node} graph={graph()} />}</For>
+          <For each={props.graph.nodes}>
+            {node => <NodeRendition node={node} graph={props.graph} />}
+          </For>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             style={{ position: 'absolute', left: '0', top: '0' }}
-            viewBox={`${bounds.xMin} ${bounds.yMin} ${bounds.width} ${bounds.height}`}
+            viewBox={viewBox()}
             class="connectors"
-            width={bounds.width}
-            height={bounds.height}
+            width={props.graph.bounds.width}
+            height={props.graph.bounds.height}
           >
             <For each={connections()}>
               {conn => (
@@ -434,7 +449,7 @@ export const GraphView: Component<Props> = ({ graph }) => {
           </svg>
         </div>
       </div>
-      <CompassRose onScroll={onScroll} onScrollToCenter={scrollToCenter} />
+      <CompassRose onScroll={onChangeScroll} onScrollToCenter={scrollToCenter} />
     </section>
   );
 };

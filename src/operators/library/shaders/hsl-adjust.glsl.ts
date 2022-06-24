@@ -1,7 +1,7 @@
 import glsl from '../glsl';
 
 export default glsl`
-vec4 colorAdjust(
+vec4 hslAdjust(
     vec4 src,
     float contrast,
     float brightness,

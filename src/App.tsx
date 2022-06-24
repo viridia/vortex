@@ -16,6 +16,7 @@ let saveDir = await documentDir();
 
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());
+  const [graphElt, setGraphElt] = createSignal<HTMLDivElement>();
 
   document.addEventListener('keypress', e => {
     switch (e.key) {
@@ -112,8 +113,8 @@ const App: Component = () => {
   return (
     <main class={styles.main}>
       <section class={styles.appBody}>
-        <CatalogPanel />
-        <GraphView graph={graph} />
+        <CatalogPanel graph={graph()} graphElt={graphElt()} />
+        <GraphView graph={graph()} ref={setGraphElt} />
         <PropertyPanel graph={graph()} />
         {/* <ErrorDialog errorMsg={errorMessage} onClose={onCloseError} /> */}
       </section>

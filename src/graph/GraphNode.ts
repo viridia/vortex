@@ -111,7 +111,7 @@ export class GraphNode {
 
   // The human-readable name of this node.
   public get name(): string {
-    return this.operator.name;
+    return this.operator.getName(this);
   }
 
   // Release any GL resources we were holding on to.

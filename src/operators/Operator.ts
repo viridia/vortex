@@ -24,6 +24,10 @@ export abstract class Operator {
     this.id = id;
   }
 
+  public getName(node: GraphNode) {
+    return this.name;
+  }
+
   /** Retrieve the set of imports needed for a given node. */
   public getImports(node: GraphNode): Set<string> {
     return EMPTY_SET;

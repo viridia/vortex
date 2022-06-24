@@ -4,11 +4,6 @@
 
 * Add export shader.
 * Add export image
-* Add import image
-
-## Bugs
-
-* Fix problem with drag and drop from operator catalog.
 
 ## QoL
 
@@ -19,6 +14,9 @@
 * Save window size.
 * Save window position.
 * Dropdowns for enum types.
+* Change node title based on settings.
+* Redo appearance of combo slider, it's too clever.
+* Middle mouse button scrolling.
 
 ## Node types
 

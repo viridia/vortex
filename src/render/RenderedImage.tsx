@@ -12,15 +12,6 @@ interface Props {
 }
 
 export const RenderedImage = (props: Props) => {
-  // const {
-  //   node,
-  //   width,
-  //   height,
-  //   tiling,
-  //   class: clsName,
-  //   ...rest
-  // } = props;
-
   let canvas: HTMLCanvasElement; // = useRef<HTMLCanvasElement>(null);
   // const renderer = useContext(RendererContext);
   // const ref = useCallback(

@@ -74,8 +74,8 @@ class Noise extends Operator {
       default: 8,
     },
     {
-      id: 'persistence',
-      name: 'Persistence',
+      id: 'roughness',
+      name: 'Roughness',
       type: DataType.FLOAT,
       min: 0,
       max: 1,
@@ -94,7 +94,7 @@ Generates a periodic Perlin noise texture.
 `;
 
   constructor() {
-    super('generator', 'Perlin Noise', 'gen_noise');
+    super('generator', 'Noise', 'gen_noise');
   }
 
   public getCode(node: GraphNode): Expr {

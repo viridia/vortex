@@ -16,7 +16,8 @@
 * Dropdowns for enum types.
 * Middle mouse button scrolling.
 * Prompt to save unsaved document.
-* Cut / Copy / Paste / Undo / Redo
+* Undo / Redo
+* Cut / Copy / Paste
 
 ## Node types
 
@@ -35,3 +36,15 @@
 
 * Use knobs instead of sliders?
 * eslint-solid
+
+## Undo actions:
+
+  * Drag node
+  * Add node
+  * Delete node
+  * Change node param
+  * Add connection
+  * Remove connection
+  * Note: save selection.
+
+  -- or just snapshot the whole thing, it's not that big...?

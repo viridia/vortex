@@ -38,7 +38,7 @@ export const CatalogPanel: Component<Props> = props => {
           Add {operator()?.name ?? 'Node'}
         </Button>
       </header>
-      <OperatorCatalog selected={operator} onSelect={onSelectOperator} />
+      <OperatorCatalog selected={operator} onSelect={onSelectOperator} onAdd={onAddNode} />
       <OperatorDetails operator={operator} />
     </aside>
   );

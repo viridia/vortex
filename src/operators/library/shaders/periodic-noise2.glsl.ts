@@ -8,7 +8,7 @@ float periodicNoise2(
     float offset_z,
     int start_band,
     int end_band,
-    float persistence) {
+    float roughness) {
   float coeff = 1.0;
   float accum = 0.0;
   float total = 0.0;
@@ -18,7 +18,7 @@ float periodicNoise2(
     if (i >= start_band && i <= end_band) {
       accum += pnoise(vec3(uv.x * sx, uv.y * sy, offset_z), vec3(sx, sy, 1000)) * coeff;
       total += coeff;
-      coeff *= persistence;
+      coeff *= roughness;
     }
     sx *= 2.0;
     sy *= 2.0;

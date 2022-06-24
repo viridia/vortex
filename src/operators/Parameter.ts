@@ -28,7 +28,6 @@ export interface Parameter {
   max?: number;
   increment?: number;
   precision?: number;
-  logScale?: boolean;
   noAlpha?: boolean;
   enumVals?: EnumValue[]; // For enumerations
   children?: Parameter[]; // If this is a group

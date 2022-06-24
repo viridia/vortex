@@ -61,7 +61,6 @@ export const ScalarProperty: Component<Props> = props => {
       min={min}
       increment={increment}
       precision={precision}
-      logScale={parameter.logScale}
       enumVals={parameter.enumVals?.map(ev => ev.name)}
       onChange={onChange}
     />

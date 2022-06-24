@@ -23,11 +23,12 @@ export const PropertyPanel: Component<Props> = ({ graph }) => {
           <>
             <PropertyEditor graph={graph} node={node} />
             <NodeActions
+              graph={graph}
               node={node}
               locked={lockedNode() !== null}
               tiling={tiling()}
               onSetTiling={setTiling}
-              onLock={(lock) => {
+              onLock={lock => {
                 if (lock) {
                   setLockedNode(selectedNode());
                 } else {

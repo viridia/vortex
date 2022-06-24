@@ -1,13 +1,14 @@
 import { Component, createEffect, createSignal } from 'solid-js';
 import { Button } from '../controls/Button';
 import { ButtonGroup } from '../controls/ButtonGroup';
-import { GraphNode } from '../graph';
+import { Graph, GraphNode } from '../graph';
 import lockImg from '../images/lock.png';
 import { ExportImageModal } from './ExportImageModal';
 import styles from './NodeActions.module.scss';
 import { ShaderSourceDialog } from './ShaderSourceDialog';
 
 interface Props {
+  graph: Graph;
   node: GraphNode;
   tiling: number;
   onSetTiling: (tiling: number) => void;
@@ -66,6 +67,7 @@ export const NodeActions: Component<Props> = props => {
           setShowSource(false);
         }}
         node={props.node}
+        graph={props.graph}
       />
       <ExportImageModal
         node={props.node}

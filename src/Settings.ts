@@ -18,9 +18,6 @@ export const settingsManager = new SettingsManager<SettingsSchema>(
 );
 
 settingsManager.initialize().then(() => {
-  // any key other than 'theme' and 'startFullscreen' will be invalid.
-  // theme key will only accept 'dark' or 'light' as a value due to the generic.
-  // settingsManager.setCache('windowPosition');
   const windowSize = settingsManager.getCache('windowSize');
   if (Array.isArray(windowSize)) {
     const [width, height] = windowSize;

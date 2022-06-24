@@ -23,10 +23,18 @@
       },
       "fs": {
         "readFile": true,
-        "writeFile": true
+        "writeFile": true,
+        "createDir": true,
+        "readDir": true,
+        "scope": ["$CONFIG/*"]
       },
       "path": {
         "all": true
+      },
+      "window": {
+        "close": true,
+        "setSize": true,
+        "setPosition": true
       }
     },
     "bundle": {

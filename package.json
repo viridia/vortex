@@ -34,6 +34,7 @@
     "marked": "^4.0.17",
     "solid-headless": "^0.11.0",
     "solid-js": "^1.4.2",
-    "solid-proxies": "^0.4.0"
+    "solid-proxies": "^0.4.0",
+    "tauri-settings": "^0.1.2"
   }
 }

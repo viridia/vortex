@@ -1,16 +1,17 @@
 import { Component, createEffect, createSignal } from 'solid-js';
 import styles from './App.module.scss';
-import { appWindow } from '@tauri-apps/api/window';
+import { appWindow, PhysicalPosition, PhysicalSize } from '@tauri-apps/api/window';
 import { CatalogPanel } from './catalog/CatalogPanel';
 import { PropertyPanel } from './propedit/PropertyPanel';
 import { Graph } from './graph';
 import { GraphView } from './graphview/GraphView';
-import { open, save } from '@tauri-apps/api/dialog';
+import { dialog } from '@tauri-apps/api';
 import { documentDir, dirname } from '@tauri-apps/api/path';
 import { readTextFile, writeFile } from '@tauri-apps/api/fs';
 
 import './global.scss';
 import { registry } from './operators/Registry';
+import { settingsManager } from './Settings';
 
 let saveDir = await documentDir();
 
@@ -29,7 +30,7 @@ const App: Component = () => {
   });
 
   async function doSaveAs() {
-    const filePath = await save({
+    const filePath = await dialog.save({
       defaultPath: saveDir,
       filters: [
         {
@@ -39,7 +40,7 @@ const App: Component = () => {
       ],
     });
     if (filePath) {
-      saveDir = await dirname(filePath)
+      saveDir = await dirname(filePath);
       graph().path = filePath;
       doSave();
     }
@@ -68,7 +69,7 @@ const App: Component = () => {
           if (gr.modified) {
             // Prompt save
           }
-          const openResult = await open({
+          const openResult = await dialog.open({
             defaultPath: saveDir,
             multiple: false,
             filters: [
@@ -80,7 +81,7 @@ const App: Component = () => {
           });
           const filePath = Array.isArray(openResult) ? openResult[0] : openResult;
           if (filePath) {
-            saveDir = await dirname(filePath)
+            saveDir = await dirname(filePath);
             const json = await readTextFile(filePath);
             if (json) {
               const parsed = JSON.parse(json);
@@ -112,6 +113,23 @@ const App: Component = () => {
           break;
         }
       }
+    });
+
+    appWindow.listen<PhysicalSize>('tauri://resize', ({ payload }) => {
+      // console.log(payload);
+      if (payload.width > 0 && payload.height > 0) {
+        settingsManager.setCache('windowSize', [payload.width, payload.height]);
+        // console.log(settingsManager.getCache('windowSize'));
+      }
+    });
+
+    appWindow.listen<PhysicalPosition>('tauri://move', ({ payload }) => {
+      settingsManager.setCache('windowPosition', [payload.x, payload.y]);
+    });
+
+    appWindow.listen('tauri://close-requested', async () => {
+      await settingsManager.syncCache();
+      await appWindow.close();
     });
   });
 

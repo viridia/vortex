@@ -139,6 +139,15 @@ export class Graph {
     return this.nodes.filter(node => node.selected);
   }
 
+  /** Select all nodes. */
+  public selectAll() {
+    batch(() => {
+      this.nodes.forEach(n => {
+        n.selected = true;
+      });
+    });
+  }
+
   /** Clear the current selection. */
   public clearSelection() {
     batch(() => {

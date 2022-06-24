@@ -36,7 +36,7 @@ fn main() {
       .add_native_item(MenuItem::Cut)
       .add_native_item(MenuItem::Copy)
       .add_native_item(MenuItem::Paste)
-      .add_native_item(MenuItem::SelectAll),
+      .add_item(CustomMenuItem::new("selectall", "Select All").accelerator("CmdOrControl+A")),
   );
   let window_menu = Submenu::new(
     "Window",

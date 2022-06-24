@@ -106,6 +106,11 @@ const App: Component = () => {
           doSaveAs();
           break;
         }
+
+        case 'selectall': {
+          gr.selectAll();
+          break;
+        }
       }
     });
   });

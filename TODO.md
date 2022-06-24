@@ -17,6 +17,8 @@
 * Change node title based on settings.
 * Redo appearance of combo slider, it's too clever.
 * Middle mouse button scrolling.
+* Prompt to save unsaved document.
+* Cut / Copy / Paste / Undo / Redo
 
 ## Node types
 

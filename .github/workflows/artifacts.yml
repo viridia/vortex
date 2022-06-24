@@ -1,4 +1,4 @@
-name: "upload"
+name: "Upload Artifacts"
 
 on: pull_request
 

@@ -18,7 +18,7 @@ export const ColorGradientProperty: Component<Props> = props => {
     graph.modified = true;
   };
 
-  const value = createMemo(() => props.node.paramValues.get(parameter.id));
+  const value = createMemo(() => props.node.paramValues.get(parameter.id) as ColorGradient);
   return (
     <Show when={!!value}>
       {() => <ColorGradientEditor value={value()} onChange={onChange} />}

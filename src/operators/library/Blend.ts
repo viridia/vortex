@@ -143,7 +143,7 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
 
   public getImports(node: GraphNode): Set<string> {
     const imports = new Set<string>();
-    const op: BlendOp = node.paramValues.get('op');
+    const op = node.paramValues.get('op') as BlendOp;
     if (node.paramValues.get('norm')) {
       imports.add('clamp_color');
     }
@@ -178,8 +178,8 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
       return a;
     }
 
-    const op: BlendOp = node.paramValues.get('op');
-    const norm: boolean = node.paramValues.get('norm');
+    const op = node.paramValues.get('op') as BlendOp;
+    const norm = node.paramValues.get('norm') as boolean;
 
     // Ops which don't require normalization
     if (op === BlendOp.MIX) {

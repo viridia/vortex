@@ -73,8 +73,8 @@ class IlluminatePBR extends Operator {
       type: DataType.VEC3,
       default: [0.5, 0.5, 0.5, 1.0],
       computed: node => {
-        const a: number = (node.paramValues.get('azimuth') * -Math.PI) / 180;
-        const e: number = (node.paramValues.get('elevation') * Math.PI) / 180;
+        const a: number = (node.paramValues.get('azimuth') as number * -Math.PI) / 180;
+        const e: number = (node.paramValues.get('elevation') as number * Math.PI) / 180;
         return [Math.sin(a) * Math.cos(e), Math.cos(a) * Math.cos(e), Math.sin(e)];
       },
     },

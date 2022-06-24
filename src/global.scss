@@ -5,24 +5,23 @@ $gray3: #a8a8af;
 $gray4: #88888f;
 $gray5: #666677;
 $gray6: #44444c;
-
-$gray70: #33333c;
-$gray80: #28282f;
-$gray90: #14141f;
-$gray100: #000;
+$gray7: #33333c;
+$gray8: #28282f;
+$gray9: #14141f;
+$gray10: #000;
 
 $coolGray: #99e;
 $coolGray2: #558;
 
 :root {
   --colorPanelText: #{$gray3};
-  --colorPanelBg: #{$gray80};
+  --colorPanelBg: #{$gray8};
 
   --colorListText: #{$gray2};
-  --colorListBg: #{$gray70};
+  --colorListBg: #{$gray7};
   --colorListBgHover: #{$gray6};
   --colorListBgSelected: #{$coolGray2};
-  --colorListBorder: #{$gray100};
+  --colorListBorder: #{$gray10};
 
   --colorGraphBg: #{$gray5};
   --colorGraphBgSquares: #{darken($gray5, 2%)};
@@ -38,48 +37,49 @@ $coolGray2: #558;
 
   --colorControlBorder: #{$gray6};
 
-  --colorComboBg: #{$gray70};
+  --colorComboBg: #{$gray7};
   --colorComboBgBar: #{$gray6};
   --colorComboArrowIcon: #{$gray3};
   --colorComboArrowIconActive: #{$gray2};
-  --colorComboArrowBgHover: #{lighten($gray70, 3%)};
+  --colorComboArrowBgHover: #{lighten($gray7, 3%)};
   --colorComboName: #{$gray3};
   --colorComboValue: #{$gray2};
 
   --colorParamGroupBg: #{$gray6};
   --colorParamGroupHeaderBg: #{lighten($gray6, 5%)};
-  --colorParamGroupBorder: #{$gray90};
-  --colorParamGroupSep: #{$gray80};
+  --colorParamGroupBorder: #{$gray9};
+  --colorParamGroupSep: #{$gray8};
 
-  --colorModalBg: #{$gray80};
-  --colorModalBorder: #{$gray100};
+  --colorModalBg: #{$gray8};
+  --colorModalBorder: #{$gray10};
   --colorModalText: #{$gray2};
-  --colorModalShadow: #{$gray100};
+  --colorModalShadow: #{$gray10};
   --colorModalSepLight: #{$gray6};
-  --colorModalSepDark: #{$gray100};
+  --colorModalSepDark: #{$gray10};
 
   --colorButtonText: #{$gray3};
   --colorButtonTextDisabled: #{$gray5};
-  --colorButtonBorder: #{$gray100};
+  --colorButtonBorder: #{$gray10};
   --buttonBg: #{linear-gradient(to bottom, lighten($gray6, 5%), darken($gray6, 8%))};
-  --buttonBgActive: #{linear-gradient(to bottom, lighten($gray70, 10%), darken($gray6, 10%))};
+  --buttonBgActive: #{linear-gradient(to bottom, lighten($gray7, 10%), darken($gray6, 10%))};
   --buttonBgSelected: #{linear-gradient(to bottom, lighten($coolGray2, 1%), darken($coolGray2, 1%))};
 
-  --colorSourceBg: #{$gray70};
+  --colorSourceBg: #{$gray7};
   --colorSourceText: #{$gray2};
 
   --colorHexBg: #{$gray6};
   --colorHexText: #{$gray2};
-  --colorHexBorder: #{$gray80};
+  --colorHexBorder: #{$gray8};
 
   --colorAlphaPatternLight: #{$gray5};
-  --colorAlphaPatternDark: #{$gray80};
+  --colorAlphaPatternDark: #{$gray8};
 
-  --colorErrorTextBg: #{$gray70};
+  --colorErrorTextBg: #{$gray7};
 }
 
 body {
   overscroll-behavior-x: none;
+  background-color: $gray7;
 }
 
 .rounded-scrollbars::-webkit-scrollbar {
@@ -100,11 +100,3 @@ body {
 .rounded-scrollbars::-webkit-scrollbar-corner {
   background-color: transparent;
 }
-
-/*
-export const colors = {
-  connectorStroke: '#47b',
-  connectorOutlineStroke: '#000',
-  connectorShadowStroke: '#000',
-  connectorStrokeVector: '#4c4',
-}; */

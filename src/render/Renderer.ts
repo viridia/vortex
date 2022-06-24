@@ -3,7 +3,8 @@ import { ColorGradient, RGBAColor } from './colors';
 import { DataType } from '../operators';
 import { GLResources } from './GLResources';
 import { GraphNode } from '../graph';
-import { batch, createContext } from 'solid-js';
+import { batch } from 'solid-js';
+import { readBinaryFile } from '@tauri-apps/api/fs';
 
 type RenderTaskState = 'running' | 'finishing' | 'stopped';
 
@@ -241,23 +242,14 @@ export class Renderer {
           break;
         case DataType.VEC2:
           if (value !== undefined) {
-            gl.uniform2f(
-              gl.getUniformLocation(program, uniformName),
-              value[0],
-              value[1],
-            );
+            gl.uniform2f(gl.getUniformLocation(program, uniformName), value[0], value[1]);
           } else {
             gl.uniform2f(gl.getUniformLocation(program, uniformName), 0, 0);
           }
           break;
         case DataType.VEC3:
           if (value !== undefined) {
-            gl.uniform3f(
-              gl.getUniformLocation(program, uniformName),
-              value[0],
-              value[1],
-              value[2],
-            );
+            gl.uniform3f(gl.getUniformLocation(program, uniformName), value[0], value[1], value[2]);
           } else {
             gl.uniform3f(gl.getUniformLocation(program, uniformName), 0, 0, 0);
           }
@@ -404,7 +396,7 @@ export class Renderer {
     }
   }
 
-  public loadTexture(url: string, callback: (texture: WebGLTexture) => void) {
+  public loadTexture(filePath: string, callback: (texture: WebGLTexture) => void) {
     const gl = this.gl;
 
     const texture = gl.createTexture()!;
@@ -415,7 +407,7 @@ export class Renderer {
 
     const image = new Image();
     image.onload = function () {
-      // console.log('onLoad', texture, image.width, image.height);
+      console.log('image.onload', texture, image.width, image.height);
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
@@ -430,11 +422,16 @@ export class Renderer {
     };
     image.onerror = function (err) {
       console.error(err);
-    }
+    };
 
-    console.log('setting url', url);
-    image.crossOrigin = '';
-    image.src = url;
+    readBinaryFile(filePath).then(imgData => {
+      const dataUrl = URL.createObjectURL(new Blob([imgData]));
+      image.src = dataUrl;
+      URL.revokeObjectURL(dataUrl);
+    });
+    // console.log('setting url', filePath);
+    // image.crossOrigin = '';
+    // image.src = `file:/${filePath}`;
   }
 
   private compileShader(type: number, source: string, node?: GraphNode): WebGLShader | null {

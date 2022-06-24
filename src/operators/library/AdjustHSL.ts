@@ -5,15 +5,15 @@ import { makeFunctionType } from '../FunctionDefn';
 
 const IMPORTS = new Set(['hsv', 'color-adjust']);
 
-export const colorAdjust = defineFn({
-  name: 'colorAdjust',
+export const hslAdjust = defineFn({
+  name: 'hslAdjust',
   type: makeFunctionType({
     result: DataType.VEC4,
     args: [DataType.VEC4, DataType.FLOAT, DataType.FLOAT, DataType.FLOAT, DataType.FLOAT],
   }),
 });
 
-class ColorAdjust extends Operator {
+class AdjustHSL extends Operator {
   public readonly inputs: Input[] = [
     {
       id: 'in',
@@ -70,7 +70,7 @@ class ColorAdjust extends Operator {
   public readonly description = `Adjust colors.`;
 
   constructor() {
-    super('filter', 'Color Adjust', 'filter_color_adjust');
+    super('filter', 'Adjust HSL', 'filter_hsl_adjust');
   }
 
   public getImports(node: GraphNode): Set<string> {
@@ -78,11 +78,11 @@ class ColorAdjust extends Operator {
   }
 
   public getCode(node: GraphNode): Expr {
-    return colorAdjust(
+    return hslAdjust(
       refInput('in', DataType.VEC4, node, refTexCoords()),
       ...this.params.map(param => refUniform(param.id, param.type, node))
     );
   }
 }
 
-export default new ColorAdjust();
+export default new AdjustHSL();

@@ -2,22 +2,21 @@
 
 ## MVP
 
-* File menu open / save / save as
-* Fix problem with drag and drop from operator catalog.
 * Add export shader.
 * Add export image
-* Add import image
 
 ## QoL
 
 * Fix position combo slider.
 * Add turbulence
-* Think about making preview image optional on nodes.
+* Think about making preview image optional on some node types.
 * Automated build and release.
 * Save window size.
 * Save window position.
 * Dropdowns for enum types.
-* ESLint
+* Change node title based on settings.
+* Redo appearance of combo slider, it's too clever.
+* Middle mouse button scrolling.
 
 ## Node types
 
@@ -36,3 +35,4 @@
 ## Future
 
 * Use knobs instead of sliders?
+* eslint-solid

@@ -13,6 +13,7 @@ import {
 } from '../../render/Expr';
 import { GraphNode } from '../../graph';
 import { makeFunctionType } from '../FunctionDefn';
+import { EnumValue } from '../Parameter';
 import { vec4, mix, max, min, abs } from '../../render/glIntrinsics';
 
 enum BlendOp {
@@ -28,6 +29,20 @@ enum BlendOp {
   DODGE = 22,
   BURN = 23,
 }
+
+const blendOpNames: EnumValue[] = [
+  { name: 'Mix', value: BlendOp.MIX },
+  { name: 'Add', value: BlendOp.ADD },
+  { name: 'Subtract', value: BlendOp.SUBTRACT },
+  { name: 'Multiply', value: BlendOp.MULTIPLY },
+  { name: 'Difference', value: BlendOp.DIFFERENCE },
+  { name: 'Lighten', value: BlendOp.LIGHTEN },
+  { name: 'Darken', value: BlendOp.DARKEN },
+  { name: 'Screen', value: BlendOp.SCREEN },
+  { name: 'Overlay', value: BlendOp.OVERLAY },
+  { name: 'Color Dodge', value: BlendOp.DODGE },
+  { name: 'Color Burn', value: BlendOp.BURN },
+];
 
 export const blend_screen = defineFn({
   name: 'blend_screen',
@@ -69,7 +84,7 @@ export const clamp_color = defineFn({
   }),
 });
 
-class Blend extends Operator {
+class Mix extends Operator {
   public readonly inputs: Input[] = [
     {
       id: 'a',
@@ -92,21 +107,9 @@ class Blend extends Operator {
   public readonly params: Parameter[] = [
     {
       id: 'op',
-      name: 'Operator',
+      name: 'Mix Function',
       type: DataType.INTEGER,
-      enumVals: [
-        { name: 'Mix', value: BlendOp.MIX },
-        { name: 'Add', value: BlendOp.ADD },
-        { name: 'Subtract', value: BlendOp.SUBTRACT },
-        { name: 'Multiply', value: BlendOp.MULTIPLY },
-        { name: 'Difference', value: BlendOp.DIFFERENCE },
-        { name: 'Lighten', value: BlendOp.LIGHTEN },
-        { name: 'Darken', value: BlendOp.DARKEN },
-        { name: 'Screen', value: BlendOp.SCREEN },
-        { name: 'Overlay', value: BlendOp.OVERLAY },
-        { name: 'Color Dodge', value: BlendOp.DODGE },
-        { name: 'Color Burn', value: BlendOp.BURN },
-      ],
+      enumVals: blendOpNames,
       default: 1,
       pre: true,
     },
@@ -138,12 +141,18 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
 `;
 
   constructor() {
-    super('filter', 'Blend', 'filter_blend');
+    super('filter', 'Mix', 'filter_mix');
+  }
+
+  public getName(node: GraphNode) {
+    const op = node.paramValues.get('op') as number;
+    const opName = blendOpNames.find(ev => ev.value === op);
+    return opName?.name ?? super.getName(node);
   }
 
   public getImports(node: GraphNode): Set<string> {
     const imports = new Set<string>();
-    const op: BlendOp = node.paramValues.get('op');
+    const op = node.paramValues.get('op') as BlendOp;
     if (node.paramValues.get('norm')) {
       imports.add('clamp_color');
     }
@@ -178,8 +187,8 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
       return a;
     }
 
-    const op: BlendOp = node.paramValues.get('op');
-    const norm: boolean = node.paramValues.get('norm');
+    const op = node.paramValues.get('op') as BlendOp;
+    const norm = node.paramValues.get('norm') as boolean;
 
     // Ops which don't require normalization
     if (op === BlendOp.MIX) {
@@ -234,4 +243,4 @@ Blends two source images, similar to layer operations in GIMP or PhotoShop.
   }
 }
 
-export default new Blend();
+export default new Mix();

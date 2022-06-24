@@ -13,7 +13,19 @@ import { union } from '../lib/functional';
 import { batch, createMemo, createRoot } from 'solid-js';
 import { createMap } from 'solid-proxies';
 import { makeObservable } from '../lib/makeObservable';
-import { ColorStop } from '../render/colors';
+import { ColorGradient, ColorStop, RGBAColor } from '../render/colors';
+
+export interface ImageParamData {
+  path: string;
+}
+
+export type ParamValue =
+  | string
+  | number
+  | boolean
+  | RGBAColor
+  | ColorGradient
+  | ImageParamData;
 
 /** A node in the graph. */
 export class GraphNode {
@@ -26,7 +38,7 @@ export class GraphNode {
   public outputs: OutputTerminal[] = [];
 
   // Node parameters
-  public paramValues = createMap<string, any>();
+  public paramValues = createMap<string, ParamValue>();
 
   // Node selection state
   public selected = false;
@@ -99,7 +111,7 @@ export class GraphNode {
 
   // The human-readable name of this node.
   public get name(): string {
-    return this.operator.name;
+    return this.operator.getName(this);
   }
 
   // Release any GL resources we were holding on to.
@@ -181,9 +193,7 @@ export class GraphNode {
       Return 'false' from the callback to signal that the visitor should not traverse any
       deeper into the graph.
   */
-  public visitDownstreamNodes(
-    callback: (node: GraphNode, conn: Connection) => boolean | void
-  ) {
+  public visitDownstreamNodes(callback: (node: GraphNode, conn: Connection) => boolean | void) {
     const visited = new Set<number>();
     const visit = (node: GraphNode): void => {
       if (node.id && !visited.has(node.id)) {
@@ -230,9 +240,9 @@ export class GraphNode {
     for (const param of this.operator.paramList) {
       // console.debug('param', param, this.paramValues.size);
       if (param.type === DataType.IMAGE && this.paramValues.has(param.id)) {
-        const imageData = this.paramValues.get(param.id);
-        if (imageData?.url) {
-          renderer.loadTexture(imageData.url, texture => {
+        const imageData = this.paramValues.get(param.id) as ImageParamData | undefined;
+        if (imageData?.path) {
+          renderer.loadTexture(imageData.path, texture => {
             this.ensureGLResources().textures.set(param.id, texture);
             // TODO: We need to make this an observable.
             // this.notifyChange(ChangeType.PARAM_VALUE_CHANGED);

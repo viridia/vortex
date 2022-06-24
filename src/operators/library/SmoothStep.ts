@@ -50,7 +50,7 @@ class Smooth extends Operator {
       name: 'Function',
       type: DataType.INTEGER,
       enumVals: [
-        { name: 'Linear', value: 0 },
+        { name: 'Linear Step', value: 0 },
         { name: 'Smoothstep', value: 1 },
         { name: 'Smootherstep', value: 2 },
       ],

@@ -5,7 +5,7 @@ import cellular from './cellular.glsl';
 import cellularHex from './cellular_hex.glsl';
 import channel_mask from './channel_mask.glsl';
 import clamp_color from './clamp_color.glsl';
-import colorAdjust from './color-adjust.glsl';
+import colorAdjust from './hsl-adjust.glsl';
 import crossfade from './crossfade.glsl';
 import gradient from './gradient.glsl';
 import gradientColor from './gradient-color.glsl';

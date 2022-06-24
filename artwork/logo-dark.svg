@@ -65,9 +65,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.43197922"
-     inkscape:cx="339.13668"
-     inkscape:cy="471.08747"
+     inkscape:zoom="0.61091087"
+     inkscape:cx="414.95415"
+     inkscape:cy="447.69215"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -200,5 +200,11 @@
          style="opacity:1;fill:url(#linearGradient1594);fill-opacity:1;stroke-width:0.07"
          id="path1512" />
     </g>
+    <circle
+       style="opacity:0.491803;fill:#000000;stroke:none;stroke-width:2.43417;stroke-linecap:round;fill-opacity:0.0887372"
+       id="path431"
+       cx="105.83334"
+       cy="143.9333"
+       r="97.366638" />
   </g>
 </svg>

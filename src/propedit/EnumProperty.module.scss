@@ -1,0 +1,59 @@
+.enumProp {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--colorParamGroupSep);
+  position: relative;
+}
+
+.button {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  height: 30px;
+  user-select: none;
+  -webkit-user-select: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.name {
+  color: var(--colorComboName);
+  margin-right: 4px;
+}
+
+.value {
+  color: var(--colorComboValue);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.arrow {
+  color: var(--colorMenuArrow);
+  margin-right: 4px;
+}
+
+.drop {
+  position: absolute;
+  background-color: var(--colorMenuBg);
+  border: 1px sold var(--colorMenuBorder);
+  box-shadow: 0 0 5px var(--colorMenuShadow);
+  color: var(--colorMenuText);
+  padding: 4px;
+  top: calc(100% + 3px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+}
+
+.item {
+  padding: 3px 8px;
+  &:hover {
+    background-color: var(--colorMenuBgHover);
+    color: var(--colorMenuTextHover);
+  }
+}

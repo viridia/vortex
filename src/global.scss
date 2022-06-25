@@ -44,6 +44,14 @@ $coolGray2: #558;
   --colorComboValue: #{$gray2};
   --colorComboTrack: #{$gray7};
 
+  --colorMenuBg: #{$gray6};
+  --colorMenuBorder: #{$gray9};
+  --colorMenuShadow: #{$gray10};
+  --colorMenuText: #{$gray2};
+  --colorMenuArrow: #{$gray4};
+  --colorMenuTextHover: #{$gray1};
+  --colorMenuBgHover: #{$coolGray2};
+
   --colorParamGroupBg: #{$gray6};
   --colorParamGroupHeaderBg: #{lighten($gray6, 5%)};
   --colorParamGroupBorder: #{$gray9};

@@ -3,7 +3,7 @@ import { Expr, defineFn, refTexCoords, refUniform } from '../../render/Expr';
 import { GraphNode } from '../../graph';
 import { makeFunctionType } from '../FunctionDefn';
 
-const IMPORTS = new Set(['steppers', 'permute', 'pnoise', 'periodic-noise-turbulence']);
+const IMPORTS = new Set(['steppers', 'permute', 'pnoise', 'periodic-noise']);
 
 const noise2Turbo = defineFn({
   name: 'periodicNoiseTurbulence',
@@ -89,9 +89,8 @@ Generates a periodic Perlin noise texture.
 * **Scale X** is the overall scaling factor along the x-axis.
 * **Scale Y** is the overall scaling factor along the y-axis.
 * **Z Offset** is the z-coordinate within the 3D noise space.
-* **Start Band** and **End Band** control the range of frequency bands. Each band represents
-  one octave of noise.
-* **Persistance** determines the amplitude falloff from one frequencey band to the next.
+* **Octaves** is the number of octaves of noise to generate.
+* **Persistance** determines the amplitude falloff from one octave to the next.
 * **Turbulance** distorts the noise coordinate space using a secondary noise signal.
 `;
 

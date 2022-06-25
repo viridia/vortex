@@ -54,6 +54,12 @@ fn main() {
         .add_submenu(window_menu),
     )
     // .menu(tauri::Menu::os_default(&context.package_info().name))
+    .invoke_handler(tauri::generate_handler![show_main_window])
     .run(context)
     .expect("error while running tauri application");
+}
+
+#[tauri::command]
+fn show_main_window(window: tauri::Window) {
+  window.show().unwrap();
 }

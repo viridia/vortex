@@ -16,17 +16,3 @@ export const settingsManager = new SettingsManager<SettingsSchema>(
     fileName: 'vortex-settings',
   }
 );
-
-settingsManager.initialize().then(() => {
-  const windowSize = settingsManager.getCache('windowSize');
-  if (Array.isArray(windowSize)) {
-    const [width, height] = windowSize;
-    appWindow.setSize(new PhysicalSize(width, height));
-  }
-
-  const windowPosition = settingsManager.getCache('windowPosition');
-  if (Array.isArray(windowPosition)) {
-    const [x, y] = windowPosition;
-    appWindow.setPosition(new PhysicalPosition(x, y));
-  }
-});

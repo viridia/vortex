@@ -84,7 +84,8 @@
         "resizable": true,
         "title": "Vortex",
         "width": 800,
-        "fileDropEnabled": false
+        "fileDropEnabled": false,
+        "visible": false
       }
     ]
   }

@@ -13,7 +13,6 @@
 * Prompt to save unsaved document.
 * Undo / Redo
 * Cut / Copy / Paste
-* Wait until JS loaded before creating window.
 * Unit tests for code generation (figure out which test runner we are going to use.)
 
 ## Node types

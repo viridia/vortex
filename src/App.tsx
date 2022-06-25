@@ -1,11 +1,11 @@
-import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
+import { Component, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
 import styles from './App.module.scss';
 import { appWindow, PhysicalPosition, PhysicalSize } from '@tauri-apps/api/window';
 import { CatalogPanel } from './catalog/CatalogPanel';
 import { PropertyPanel } from './propedit/PropertyPanel';
 import { Graph } from './graph';
 import { GraphView } from './graphview/GraphView';
-import { dialog } from '@tauri-apps/api';
+import { dialog, invoke } from '@tauri-apps/api';
 import { dirname } from '@tauri-apps/api/path';
 import { readTextFile, writeFile } from '@tauri-apps/api/fs';
 
@@ -18,6 +18,24 @@ import path from 'path';
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());
   const [graphElt, setGraphElt] = createSignal<HTMLDivElement>();
+
+  onMount(() => {
+    settingsManager.initialize().then(async () => {
+      const windowSize = settingsManager.getCache('windowSize');
+      if (Array.isArray(windowSize)) {
+        const [width, height] = windowSize;
+        await appWindow.setSize(new PhysicalSize(width, height));
+      }
+
+      const windowPosition = settingsManager.getCache('windowPosition');
+      if (Array.isArray(windowPosition)) {
+        const [x, y] = windowPosition;
+        await appWindow.setPosition(new PhysicalPosition(x, y));
+      }
+
+      invoke('show_main_window');
+    });
+  });
 
   document.addEventListener('keypress', e => {
     switch (e.key) {

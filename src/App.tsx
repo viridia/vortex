@@ -12,8 +12,8 @@ import { readTextFile, writeFile } from '@tauri-apps/api/fs';
 import './global.scss';
 import { registry } from './operators/Registry';
 import { settingsManager } from './Settings';
-
-let saveDir = await documentDir();
+import { getDefaultDir, setDefaultDir } from './lib/defaultDir';
+import path from 'path';
 
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());
@@ -31,7 +31,7 @@ const App: Component = () => {
 
   async function doSaveAs() {
     const filePath = await dialog.save({
-      defaultPath: saveDir,
+      defaultPath: graph().path ? await path.dirname(graph().path) : getDefaultDir(),
       filters: [
         {
           name: 'Vortex Graph',
@@ -40,7 +40,7 @@ const App: Component = () => {
       ],
     });
     if (filePath) {
-      saveDir = await dirname(filePath);
+      setDefaultDir(await dirname(filePath));
       graph().path = filePath;
       doSave();
     }
@@ -70,7 +70,7 @@ const App: Component = () => {
             // Prompt save
           }
           const openResult = await dialog.open({
-            defaultPath: saveDir,
+            defaultPath: getDefaultDir(),
             multiple: false,
             filters: [
               {
@@ -81,7 +81,7 @@ const App: Component = () => {
           });
           const filePath = Array.isArray(openResult) ? openResult[0] : openResult;
           if (filePath) {
-            saveDir = await dirname(filePath);
+            setDefaultDir(await dirname(filePath));
             const json = await readTextFile(filePath);
             if (json) {
               const parsed = JSON.parse(json);

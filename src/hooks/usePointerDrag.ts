@@ -105,6 +105,7 @@ export const usePointerDrag = <T extends HTMLElement = HTMLElement>(
 
   const onPointerMove: PointerEventHandler<T> = e => {
     if (e.pointerId === pointerId()) {
+      e.preventDefault();
       updateDragPosition(e);
       callbacks.onDragMove?.(dragState, e);
     }

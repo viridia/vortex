@@ -71,6 +71,7 @@ export const NodeActions: Component<Props> = props => {
       />
       <ExportImageModal
         node={props.node}
+        graph={props.graph}
         open={showExport()}
         onClose={() => {
           setShowExport(false);

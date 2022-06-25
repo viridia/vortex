@@ -1,39 +1,44 @@
 import { Button } from '../controls/Button';
-import { GraphNode } from '../graph';
+import { Graph, GraphNode } from '../graph';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '../controls/Modal';
 import { RenderedImage } from '../render/RenderedImage';
 import { Component, createSignal, For } from 'solid-js';
 import styles from './ExportImageModal.module.scss';
-
-// TODO
-// const Select = styled.select`
-//   height: 32px;
-//   padding: 0 12px;
-//   border-radius: 4;
-//   border: 1px solid ${colors.buttonBorderColor};
-//   background-image: ${colors.buttonBg};
-//   outline: none;
-// `;
+import { getDefaultDir } from '../lib/defaultDir';
+import { dialog, fs, path } from '@tauri-apps/api';
 
 const SIZES = [64, 128, 256, 512, 1024, 2048];
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  graph: Graph;
   node: GraphNode;
 }
 
 export const ExportImageModal: Component<Props> = props => {
-  // const image = useRef<HTMLCanvasElement>(null);
   const [size, setSize] = createSignal(512);
+  let canvasRef: HTMLCanvasElement;
 
-  // TODO
-  const onClickExport = () => {
-  //     image.current?.toBlob(img => {
-  //       if (img) {
-  //         download(img, `${node.name}-${node.id}.png`, 'image/png');
-  //       }
-  //     }, 'image/png');
+  const onExport = async () => {
+    if (canvasRef) {
+      const defaultPath = props.graph.path ? await path.dirname(props.graph.path) : getDefaultDir();
+      const saveResult = await dialog.save({
+        defaultPath: await path.join(defaultPath, `${props.node.name.replace(' ', '_')}.png`),
+        filters: [
+          {
+            name: 'PNG image',
+            extensions: ['png'],
+          },
+        ],
+      });
+      const savePath = Array.isArray(saveResult) ? saveResult[0] : saveResult;
+      if (savePath) {
+        canvasRef.toBlob(async imgData => {
+          fs.writeBinaryFile(savePath, new Uint8Array(await imgData.arrayBuffer()));
+        });
+      }
+    }
   };
 
   const onChangeSize = (e: any) => {
@@ -41,17 +46,19 @@ export const ExportImageModal: Component<Props> = props => {
   };
 
   return (
-    <Modal
-      open={props.open}
-      onClose={props.onClose}
-      ariaLabel="Export image"
-    >
+    <Modal open={props.open} onClose={props.onClose} ariaLabel="Export image">
       <ModalHeader>
         Generated image for {props.node.operator.name}:{props.node.id}
       </ModalHeader>
       <ModalBody classList={{ [styles.dialogBody]: true, 'rounded-scrollbars': true }}>
-        <RenderedImage node={props.node} width={size()} height={size()} />
-        {/* <RenderedImage node={node} width={size()} height={size()} ref={image} /> */}
+        <RenderedImage
+          node={props.node}
+          width={size()}
+          height={size()}
+          canvasRef={elt => {
+            canvasRef = elt;
+          }}
+        />
       </ModalBody>
       <ModalFooter>
         <select onChange={onChangeSize} value={size()}>
@@ -67,7 +74,7 @@ export const ExportImageModal: Component<Props> = props => {
           </For>
         </select>
         <Button onClick={props.onClose}>Close</Button>
-        <Button onClick={onClickExport} disabled>
+        <Button onClick={onExport} disabled={!canvasRef}>
           Export As&hellip;
         </Button>
       </ModalFooter>

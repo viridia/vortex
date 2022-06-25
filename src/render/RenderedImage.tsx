@@ -8,23 +8,11 @@ interface Props {
   height: number;
   tiling?: number;
   class?: string;
-  // ref?: HTMLCanvasElement;
+  canvasRef?: (ref: HTMLCanvasElement) => void;
 }
 
 export const RenderedImage = (props: Props) => {
   let canvas: HTMLCanvasElement; // = useRef<HTMLCanvasElement>(null);
-  // const renderer = useContext(RendererContext);
-  // const ref = useCallback(
-  //   (elt: HTMLCanvasElement) => {
-  //     (canvas as MutableRefObject<HTMLCanvasElement>).current = elt;
-  //     if (typeof canvasRef === 'function') {
-  //       canvasRef(elt);
-  //     } else if (canvasRef) {
-  //       canvasRef.current = elt;
-  //     }
-  //   },
-  //   [canvasRef]
-  // );
 
   createEffect(() => {
     const node = props.node;
@@ -41,13 +29,18 @@ export const RenderedImage = (props: Props) => {
     }
   });
 
+  const setRef = (elt: HTMLCanvasElement) => {
+    canvas = elt;
+    props.canvasRef?.(elt);
+  }
+
   return (
     <canvas
       class={props.class}
       style={{ width: `${props.width}px`, height: `${props.height}px` }}
       width={props.width}
       height={props.height}
-      ref={canvas}
+      ref={setRef}
     />
   );
 };

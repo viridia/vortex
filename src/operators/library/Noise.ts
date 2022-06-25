@@ -3,7 +3,7 @@ import { Expr, defineFn, refTexCoords, refUniform } from '../../render/Expr';
 import { GraphNode } from '../../graph';
 import { makeFunctionType } from '../FunctionDefn';
 
-const IMPORTS = new Set(['steppers', 'permute', 'pnoise', 'periodic-noise2']);
+const IMPORTS = new Set(['steppers', 'permute', 'pnoise', 'periodic-noise-turbulence']);
 
 export const noise2 = defineFn({
   name: 'periodicNoise2',
@@ -16,6 +16,23 @@ export const noise2 = defineFn({
       DataType.FLOAT,
       DataType.INTEGER,
       DataType.INTEGER,
+      DataType.FLOAT,
+    ],
+  }),
+});
+
+export const noise2Turbo = defineFn({
+  name: 'periodicNoiseTurbulence',
+  type: makeFunctionType({
+    result: DataType.FLOAT,
+    args: [
+      DataType.VEC2,
+      DataType.INTEGER,
+      DataType.INTEGER,
+      DataType.FLOAT,
+      DataType.INTEGER,
+      DataType.INTEGER,
+      DataType.FLOAT,
       DataType.FLOAT,
     ],
   }),
@@ -36,7 +53,7 @@ class Noise extends Operator {
       name: 'Scale X',
       type: DataType.INTEGER,
       min: 1,
-      max: 100,
+      max: 16,
       default: 1,
     },
     {
@@ -44,7 +61,7 @@ class Noise extends Operator {
       name: 'Scale Y',
       type: DataType.INTEGER,
       min: 1,
-      max: 100,
+      max: 16,
       default: 1,
     },
     {
@@ -82,6 +99,15 @@ class Noise extends Operator {
       default: 0.5,
       precision: 2,
     },
+    {
+      id: 'turbulence',
+      name: 'Turbulence',
+      type: DataType.FLOAT,
+      min: 0,
+      max: 4,
+      default: 0,
+      precision: 2,
+    },
   ];
   public readonly description = `
 Generates a periodic Perlin noise texture.
@@ -91,6 +117,7 @@ Generates a periodic Perlin noise texture.
 * **Start Band** and **End Band** control the range of frequency bands. Each band represents
   one octave of noise.
 * **Persistance** determines the amplitude falloff from one frequencey band to the next.
+* **Turbulance** distorts the noise coordinate space using a secondary noise signal.
 `;
 
   constructor() {
@@ -98,7 +125,7 @@ Generates a periodic Perlin noise texture.
   }
 
   public getCode(node: GraphNode): Expr {
-    return noise2(
+    return noise2Turbo(
       refTexCoords(),
       ...this.params.map(param => refUniform(param.id, param.type, node))
     );

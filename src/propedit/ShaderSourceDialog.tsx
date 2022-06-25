@@ -4,6 +4,7 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from '../controls/Modal';
 import { Graph, GraphNode } from '../graph';
 import { clipboard, path, dialog, fs } from '@tauri-apps/api';
 import styles from './ShaderSourceDialog.module.scss';
+import { getDefaultDir } from '../lib/defaultDir';
 
 interface Props {
   graph: Graph;
@@ -26,7 +27,7 @@ export const ShaderSourceDialog: Component<Props> = props => {
   const onExport = async () => {
     const defaultPath = props.graph.path
       ? await path.dirname(props.graph.path)
-      : await path.documentDir();
+      : getDefaultDir();
     const saveResult = await dialog.save({
       defaultPath: await path.join(defaultPath, `${props.node.name.replace(' ', '_')}.txt`),
       filters: [

@@ -4,6 +4,7 @@ import { batch, Component, createEffect, createSignal } from 'solid-js';
 import { Button } from '../controls/Button';
 import { Graph, GraphNode } from '../graph';
 import { ImageParamData } from '../graph/GraphNode';
+import { getDefaultDir } from '../lib/defaultDir';
 import { Parameter } from '../operators';
 import { renderer } from '../render/Renderer';
 import styles from './ImageProperty.module.scss';
@@ -13,8 +14,6 @@ interface Props {
   node: GraphNode;
   graph: Graph;
 }
-
-const docDir = await path.documentDir();
 
 /** Property editor for Image resources. */
 export const ImageProperty: Component<Props> = props => {
@@ -36,7 +35,7 @@ export const ImageProperty: Component<Props> = props => {
       ? await path.dirname(prevPath)
       : props.graph.path
       ? await path.dirname(props.graph.path)
-      : docDir;
+      : getDefaultDir();
     const openResult = await open({
       defaultPath,
       multiple: false,

@@ -2,22 +2,18 @@
 
 ## MVP
 
-* Add export image
+* Save and load are both buggy.
 
 ## QoL
 
-* Redo appearance of combo slider, it's too clever.
 * Fix position combo slider.
-* Add turbulence
-* Think about making preview image optional on some node types.
 * Automated build and release.
-* Save window size.
-* Save window position.
 * Dropdowns for enum types.
 * Middle mouse button scrolling.
 * Prompt to save unsaved document.
 * Undo / Redo
 * Cut / Copy / Paste
+* Wait until JS loaded before creating window.
 
 ## Node types
 
@@ -36,6 +32,7 @@
 
 * Use knobs instead of sliders?
 * eslint-solid
+
 
 ## Undo actions:
 

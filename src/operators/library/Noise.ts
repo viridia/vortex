@@ -5,23 +5,7 @@ import { makeFunctionType } from '../FunctionDefn';
 
 const IMPORTS = new Set(['steppers', 'permute', 'pnoise', 'periodic-noise-turbulence']);
 
-export const noise2 = defineFn({
-  name: 'periodicNoise2',
-  type: makeFunctionType({
-    result: DataType.FLOAT,
-    args: [
-      DataType.VEC2,
-      DataType.INTEGER,
-      DataType.INTEGER,
-      DataType.FLOAT,
-      DataType.INTEGER,
-      DataType.INTEGER,
-      DataType.FLOAT,
-    ],
-  }),
-});
-
-export const noise2Turbo = defineFn({
+const noise2Turbo = defineFn({
   name: 'periodicNoiseTurbulence',
   type: makeFunctionType({
     result: DataType.FLOAT,
@@ -30,7 +14,6 @@ export const noise2Turbo = defineFn({
       DataType.INTEGER,
       DataType.INTEGER,
       DataType.FLOAT,
-      DataType.INTEGER,
       DataType.INTEGER,
       DataType.FLOAT,
       DataType.FLOAT,
@@ -53,7 +36,7 @@ class Noise extends Operator {
       name: 'Scale X',
       type: DataType.INTEGER,
       min: 1,
-      max: 16,
+      max: 32,
       default: 1,
     },
     {
@@ -61,7 +44,7 @@ class Noise extends Operator {
       name: 'Scale Y',
       type: DataType.INTEGER,
       min: 1,
-      max: 16,
+      max: 32,
       default: 1,
     },
     {
@@ -75,16 +58,8 @@ class Noise extends Operator {
       default: 0,
     },
     {
-      id: 'start_band',
-      name: 'Start Band',
-      type: DataType.INTEGER,
-      min: 1,
-      max: 12,
-      default: 1,
-    },
-    {
-      id: 'end_band',
-      name: 'End Band',
+      id: 'num_octaves',
+      name: 'Octaves',
       type: DataType.INTEGER,
       min: 1,
       max: 12,

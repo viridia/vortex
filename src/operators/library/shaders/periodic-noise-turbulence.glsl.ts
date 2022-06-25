@@ -6,8 +6,7 @@ float periodicNoiseTurbulence(
     int scale_x,
     int scale_y,
     float offset_z,
-    int start_band,
-    int end_band,
+    int num_octaves,
     float roughness,
     float turbulence) {
   float coeff = 1.0;
@@ -18,7 +17,7 @@ float periodicNoiseTurbulence(
 
   // First calculate the turbulence
   for (int i = 1; i <= 16; i += 1) {
-    if (i >= start_band && i <= end_band) {
+    if (i <= num_octaves) {
       accum += vec2(
         pnoise(vec3(uv.x * sx + 23., uv.y * sy + 29., offset_z), vec3(sx, sy, 1000)),
         pnoise(vec3(uv.x * sx + 13., uv.y * sy + 17., offset_z), vec3(sx, sy, 1000))
@@ -40,7 +39,7 @@ float periodicNoiseTurbulence(
   sx = float(scale_x);
   sy = float(scale_y);
   for (int i = 1; i <= 16; i += 1) {
-    if (i >= start_band && i <= end_band) {
+    if (i <= num_octaves) {
       accum2 += pnoise(
         vec3(uv.x * sx + turboCoords.x, uv.y * sy + turboCoords.y, offset_z),
         vec3(sx, sy, 1000)

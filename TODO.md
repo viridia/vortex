@@ -1,9 +1,5 @@
 ## TODO
 
-## MVP
-
-* Save and load are both buggy.
-
 ## QoL
 
 * Dropdowns for enum types.
@@ -32,7 +28,6 @@
 
 * Use knobs instead of sliders?
 * eslint-solid
-
 
 ## Undo actions:
 

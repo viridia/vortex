@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal } from 'solid-js';
+import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
 import styles from './App.module.scss';
 import { appWindow, PhysicalPosition, PhysicalSize } from '@tauri-apps/api/window';
 import { CatalogPanel } from './catalog/CatalogPanel';
@@ -6,7 +6,7 @@ import { PropertyPanel } from './propedit/PropertyPanel';
 import { Graph } from './graph';
 import { GraphView } from './graphview/GraphView';
 import { dialog } from '@tauri-apps/api';
-import { documentDir, dirname } from '@tauri-apps/api/path';
+import { dirname } from '@tauri-apps/api/path';
 import { readTextFile, writeFile } from '@tauri-apps/api/fs';
 
 import './global.scss';
@@ -53,7 +53,7 @@ const App: Component = () => {
   }
 
   createEffect(() => {
-    appWindow.listen('tauri://menu', async ({ event, payload }) => {
+    const unlisten1 = appWindow.listen('tauri://menu', async ({ event, payload }) => {
       const gr = graph();
       switch (payload) {
         case 'new': {
@@ -89,6 +89,7 @@ const App: Component = () => {
               g.path = filePath;
               g.fromJs(parsed, registry);
               setGraph(g);
+              gr.dispose();
             }
           }
           break;
@@ -115,21 +116,27 @@ const App: Component = () => {
       }
     });
 
-    appWindow.listen<PhysicalSize>('tauri://resize', ({ payload }) => {
-      // console.log(payload);
+    const unlisten2 = appWindow.listen<PhysicalSize>('tauri://resize', ({ payload }) => {
       if (payload.width > 0 && payload.height > 0) {
         settingsManager.setCache('windowSize', [payload.width, payload.height]);
-        // console.log(settingsManager.getCache('windowSize'));
       }
     });
 
-    appWindow.listen<PhysicalPosition>('tauri://move', ({ payload }) => {
+    const unlisten3 = appWindow.listen<PhysicalPosition>('tauri://move', ({ payload }) => {
       settingsManager.setCache('windowPosition', [payload.x, payload.y]);
     });
 
-    appWindow.listen('tauri://close-requested', async () => {
+    const unlisten4 = appWindow.listen('tauri://close-requested', async () => {
       await settingsManager.syncCache();
       await appWindow.close();
+    });
+
+    onCleanup(async () => {
+      // This runs on a hot reload, we want to make sure we don't double-subscribe.
+      (await unlisten1)();
+      (await unlisten2)();
+      (await unlisten3)();
+      (await unlisten4)();
     });
   });
 
@@ -139,7 +146,6 @@ const App: Component = () => {
         <CatalogPanel graph={graph()} graphElt={graphElt()} />
         <GraphView graph={graph()} ref={setGraphElt} />
         <PropertyPanel graph={graph()} />
-        {/* <ErrorDialog errorMsg={errorMessage} onClose={onCloseError} /> */}
       </section>
     </main>
   );

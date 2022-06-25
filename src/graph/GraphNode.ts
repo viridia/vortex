@@ -19,13 +19,19 @@ export interface ImageParamData {
   path: string;
 }
 
-export type ParamValue =
-  | string
-  | number
-  | boolean
-  | RGBAColor
-  | ColorGradient
-  | ImageParamData;
+export type ParamValue = string | number | boolean | RGBAColor | ColorGradient | ImageParamData;
+export type ParamValueJson = string | number | boolean | RGBAColor | ColorGradient | ImageParamData;
+export interface ParamsJson {
+  [key: string]: ParamValueJson;
+}
+
+export interface GraphNodeJson {
+  id: number;
+  x: number;
+  y: number;
+  operator: string;
+  params: ParamsJson;
+}
 
 /** A node in the graph. */
 export class GraphNode {
@@ -218,8 +224,8 @@ export class GraphNode {
     }
   }
 
-  public toJs(): any {
-    const params: any = {};
+  public toJs(): GraphNodeJson {
+    const params: ParamsJson = {};
     for (const param of this.operator.paramList) {
       if (this.paramValues.has(param.id)) {
         params[param.id] = this.paramValues.get(param.id);

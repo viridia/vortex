@@ -1,7 +1,7 @@
 import { Bounds } from './Bounds';
-import { Connection } from './Connection';
+import { Connection, ConnectionJson } from './Connection';
 import { DataType, Registry } from '../operators';
-import { GraphNode } from './GraphNode';
+import { GraphNode, GraphNodeJson } from './GraphNode';
 import { InputTerminal } from './InputTerminal';
 import { OutputTerminal } from './OutputTerminal';
 import { Terminal } from './Terminal';
@@ -14,17 +14,21 @@ const DOC_MARGIN = 256;
 const NODE_WIDTH = 94;
 const NODE_HEIGHT = 120;
 
+export interface GraphJson {
+  nodes: GraphNodeJson[];
+  connections: ConnectionJson[];
+}
+
 export class Graph {
   public path: string | null = null;
   public nodes: ReadonlyArray<GraphNode> = [];
   public bounds = new Bounds();
   public modified = false;
-  public loaded = false;
 
   private nodeCount = 0;
 
   constructor() {
-    makeObservable(this, ['path', 'modified', 'nodes', 'loaded']);
+    makeObservable(this, ['path', 'modified', 'nodes']);
     this.nodes = [];
     this.computeBounds();
   }
@@ -84,15 +88,25 @@ export class Graph {
       typeof srcNode === 'number' ? this.findNode(srcNode) : srcNode;
     const dn: GraphNode | undefined =
       typeof dstNode === 'number' ? this.findNode(dstNode) : dstNode;
-    if (sn && dn) {
-      const st = sn.findOutputTerminal(srcTerm);
-      const dt = dn.findInputTerminal(dstTerm);
-      if (st && dt) {
-        this.connectTerminals(st, dt);
-        return true;
-      }
+    if (!sn) {
+      throw new Error(`Unknown source node id: ${srcNode}`);
     }
-    return false;
+    if (!dn) {
+      throw new Error(`Unknown destination node id: ${dstNode}`);
+    }
+
+    const st = sn.findOutputTerminal(srcTerm);
+    const dt = dn.findInputTerminal(dstTerm);
+
+    if (!st) {
+      throw new Error(`Unknown source node id: ${sn.operator.name}.${st}`);
+    }
+
+    if (!dt) {
+      throw new Error(`Unknown destination node id: ${dn.operator.name}.${dt}`);
+    }
+
+    this.connectTerminals(st, dt);
   }
 
   public connectTerminals(src: OutputTerminal, dst: InputTerminal) {
@@ -183,10 +197,6 @@ export class Graph {
     });
   }
 
-  public setLoaded() {
-    this.loaded = true;
-  }
-
   public clear() {
     batch(() => {
       this.nodes.forEach(node => {
@@ -241,61 +251,50 @@ export class Graph {
     return false;
   }
 
-  public toJs(): any {
-    const connections: any[] = [];
+  public toJs(): GraphJson {
+    const connections: ConnectionJson[] = [];
+    const nodes: GraphNodeJson[] = [];
     this.nodes.forEach(node => {
+      nodes.push(node.toJs());
       node.outputs.forEach(output => {
         output.connections.forEach(connection => {
           if (connection.source && connection.dest) {
             connections.push({
-              source: {
-                node: connection.source.node.id,
-                terminal: connection.source.id,
-              },
-              destination: {
-                node: connection.dest.node.id,
-                terminal: connection.dest.id,
-              },
+              src: [connection.source.node.id, connection.source.id],
+              dst: [connection.dest.node.id, connection.dest.id],
             });
           }
         });
       });
     });
-    return {
-      nodes: this.nodes.map(node => node.toJs()),
-      connections,
-    };
+    return { nodes, connections };
   }
 
-  public fromJs(json: any, registry: Registry) {
-    batch(() => {
-      json.nodes.forEach((node: any) => {
-        const n = new GraphNode(registry.get(node.operator), node.id);
-        n.x = node.x;
-        n.y = node.y;
-        n.operator.params.forEach(param => {
-          if (param.type === DataType.GROUP) {
-            param.children?.forEach(childParam => {
-              if (childParam.id in node.params) {
-                n.paramValues.set(childParam.id, node.params[childParam.id]);
-              }
-            });
-          } else if (param.id in node.params) {
-            n.paramValues.set(param.id, node.params[param.id]);
-          }
-        });
-        this.add(n);
+  public fromJs(json: GraphJson, registry: Registry) {
+    this.dispose();
+    json.nodes.forEach(node => {
+      const n = new GraphNode(registry.get(node.operator), node.id);
+      n.x = node.x;
+      n.y = node.y;
+      n.operator.params.forEach(param => {
+        if (param.type === DataType.GROUP) {
+          param.children?.forEach(childParam => {
+            if (childParam.id in node.params) {
+              n.paramValues.set(childParam.id, node.params[childParam.id]);
+            }
+          });
+        } else if (param.id in node.params) {
+          n.paramValues.set(param.id, node.params[param.id]);
+        }
       });
-      json.connections.forEach((connection: any) => {
-        this.connect(
-          connection.source.node,
-          connection.source.terminal,
-          connection.destination.node,
-          connection.destination.terminal
-        );
-      });
-      this.computeBounds();
-      this.modified = false;
+      this.add(n);
     });
+    json.connections.forEach(connection => {
+      const [source, sourceTerminal] = connection.src;
+      const [dest, destTerminal] = connection.dst;
+      this.connect(source, sourceTerminal, dest, destTerminal);
+    });
+    this.computeBounds();
+    this.modified = false;
   }
 }

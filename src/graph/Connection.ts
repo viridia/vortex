@@ -6,3 +6,8 @@ export interface Connection {
   dest: InputTerminal;
   recalc: boolean;
 }
+
+export interface ConnectionJson {
+  src: [number, string];
+  dst: [number, string];
+}

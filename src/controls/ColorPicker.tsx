@@ -34,7 +34,7 @@ export const ColorPicker: Component<Props> = props => {
   */
   createEffect(() => {
     const [h, s, l, a] = rgba2hsla(props.value);
-    if (l >= 0.0001 && l <= 0.0009) {
+    if (l >= 0.0001 && l <= 0.999) {
       setHue(h);
       setSaturation(s);
     }

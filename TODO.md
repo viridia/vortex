@@ -1,5 +1,11 @@
 ## TODO
 
+## Bugs
+
+* Bounds not being recalculated.
+* Better highlighting of selected color stop.
+* Connections drawn incorrectly when bounds are negative.
+
 ## QoL
 
 * Dropdowns for enum types.
@@ -10,9 +16,15 @@
 * Undo / Redo
 * Cut / Copy / Paste
 * Unit tests for code generation (figure out which test runner we are going to use.)
+* Drag selection.
+* Drag multiple nodes.
+* Drag node over connection to insert.
+* Restore drag-to-create logic.
+* Save export path in node.
 
 ## Node types
 
+* Threshold
 * Curve
 * Hi pass filter
 * Edge detect

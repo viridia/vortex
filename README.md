@@ -10,8 +10,6 @@ The actual computation of the images is performed by the GPU using WebGL.
 
 ![screenshot](./doc/vortex.png "Vortex UI")
 
-<!-- More examples [here](./doc/Examples.md). -->
-
 ## Using the application
 
 * To create new nodes, select an operator type from the table (on the left side panel) and

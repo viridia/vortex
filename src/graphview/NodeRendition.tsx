@@ -12,8 +12,8 @@ interface Props {
 /** A visual representation of a node in the graph. */
 export const NodeRendition: Component<Props> = ({ node, graph }) => {
   const style = createMemo(() => ({
-    left: `${node.x - graph.bounds.xMin}px`,
-    top: `${node.y - graph.bounds.yMin}px`,
+    left: `${node.x}px`,
+    top: `${node.y}px`,
   }));
 
   return (

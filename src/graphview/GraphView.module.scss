@@ -24,19 +24,12 @@
   border-right: 1px solid black;
   user-select: none;
   overflow: hidden;
-}
 
-.graphScroll {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  overflow: auto;
+  &.scroll {
+    cursor: move;
+  }
 }
 
 .graphScrollContent {
-  position: 'absolute';
-  left: 0;
-  top: 0;
+  position: absolute;
 }

@@ -1,6 +1,5 @@
-import { Bounds } from './Bounds';
 import { Connection, ConnectionJson } from './Connection';
-import { DataType, Registry } from '../operators';
+import { DataType, Operator, Registry } from '../operators';
 import { GraphNode, GraphNodeJson } from './GraphNode';
 import { InputTerminal } from './InputTerminal';
 import { OutputTerminal } from './OutputTerminal';
@@ -8,29 +7,28 @@ import { Terminal } from './Terminal';
 import { makeObservable } from '../lib/makeObservable';
 import { batch } from 'solid-js';
 import { renderer } from '../render/Renderer';
-
-const DOC_WIDTH = 1024;
-const DOC_MARGIN = 256;
-const NODE_WIDTH = 94;
-const NODE_HEIGHT = 120;
+import { EventSource } from './EventSource';
 
 export interface GraphJson {
   nodes: GraphNodeJson[];
   connections: ConnectionJson[];
 }
 
-export class Graph {
+export interface GraphEvents {
+  add: Operator;
+}
+
+export class Graph extends EventSource<GraphEvents> {
   public path: string | null = null;
   public nodes: ReadonlyArray<GraphNode> = [];
-  public bounds = new Bounds();
   public modified = false;
 
   private nodeCount = 0;
 
   constructor() {
+    super();
     makeObservable(this, ['path', 'modified', 'nodes']);
     this.nodes = [];
-    this.computeBounds();
   }
 
   public dispose() {
@@ -42,7 +40,16 @@ export class Graph {
     batch(() => {
       this.nodeCount = Math.max(this.nodeCount, node.id + 1);
       this.nodes = [...this.nodes, node];
-      this.computeBounds();
+      this.modified = true;
+    });
+  }
+
+  public addMany(nodes: GraphNode[]) {
+    batch(() => {
+      nodes.forEach(n => {
+        this.nodeCount = Math.max(this.nodeCount, n.id + 1);
+      });
+      this.nodes = [...this.nodes, ...nodes];
       this.modified = true;
     });
   }
@@ -137,17 +144,6 @@ export class Graph {
     });
   }
 
-  computeBounds() {
-    batch(() => {
-      const bounds = new Bounds(-DOC_WIDTH / 2, -DOC_WIDTH / 2, DOC_WIDTH, DOC_WIDTH);
-      this.nodes.forEach(node => {
-        bounds.unionWith(node.x - DOC_MARGIN, node.y - DOC_MARGIN);
-        bounds.unionWith(node.x + NODE_WIDTH + DOC_MARGIN, node.y + NODE_HEIGHT + DOC_MARGIN);
-      });
-      this.bounds = bounds;
-    });
-  }
-
   /** Return a list of all selected nodes. */
   public get selection(): GraphNode[] {
     return this.nodes.filter(node => node.selected);
@@ -192,7 +188,6 @@ export class Graph {
       });
       // Delete all selected nodes
       this.nodes = this.nodes.filter(n => !n.selected);
-      this.computeBounds();
       this.modified = true;
     });
   }
@@ -212,7 +207,6 @@ export class Graph {
         node.setDeleted();
       });
       this.nodes = [];
-      this.computeBounds();
       this.modified = true;
     });
   }
@@ -272,7 +266,7 @@ export class Graph {
 
   public fromJs(json: GraphJson, registry: Registry) {
     this.dispose();
-    json.nodes.forEach(node => {
+    const nodes = json.nodes.map(node => {
       const n = new GraphNode(registry.get(node.operator), node.id);
       n.x = node.x;
       n.y = node.y;
@@ -287,14 +281,16 @@ export class Graph {
           n.paramValues.set(param.id, node.params[param.id]);
         }
       });
-      this.add(n);
+      return n;
     });
-    json.connections.forEach(connection => {
-      const [source, sourceTerminal] = connection.src;
-      const [dest, destTerminal] = connection.dst;
-      this.connect(source, sourceTerminal, dest, destTerminal);
+    batch(() => {
+      this.addMany(nodes);
+      json.connections.forEach(connection => {
+        const [source, sourceTerminal] = connection.src;
+        const [dest, destTerminal] = connection.dst;
+        this.connect(source, sourceTerminal, dest, destTerminal);
+      });
+      this.modified = false;
     });
-    this.computeBounds();
-    this.modified = false;
   }
 }

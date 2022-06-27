@@ -17,7 +17,6 @@ import path from 'path';
 
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());
-  const [graphElt, setGraphElt] = createSignal<HTMLDivElement>();
 
   onMount(() => {
     settingsManager.initialize().then(async () => {
@@ -161,8 +160,8 @@ const App: Component = () => {
   return (
     <main class={styles.main}>
       <section class={styles.appBody}>
-        <CatalogPanel graph={graph()} graphElt={graphElt()} />
-        <GraphView graph={graph()} ref={setGraphElt} />
+        <CatalogPanel graph={graph()} />
+        <GraphView graph={graph()} />
         <PropertyPanel graph={graph()} />
       </section>
     </main>

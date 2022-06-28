@@ -27,6 +27,7 @@ import {
 import styles from './GraphView.module.scss';
 import { createStore } from 'solid-js/store';
 import { Bounds } from '../graph/Bounds';
+import { NodesToMove } from '../graph/Graph';
 
 type DragType = 'input' | 'output' | 'node' | 'scroll' | null;
 
@@ -37,6 +38,11 @@ interface Props {
 const DOC_MARGIN = 32;
 const NODE_WIDTH = 94;
 const NODE_HEIGHT = 120;
+
+interface DragNodes extends NodesToMove {
+  dragXOffset: number;
+  dragYOffset: number;
+}
 
 export const GraphView: Component<Props> = props => {
   let viewEl: HTMLDivElement;
@@ -60,9 +66,7 @@ export const GraphView: Component<Props> = props => {
   let pointerId = -1;
   let dragX = 0;
   let dragY = 0;
-  let dragXOffset = 0;
-  let dragYOffset = 0;
-  let dragNode: GraphNode | null = null;
+  let dragNodes: DragNodes[] = [];
   let dragSource: OutputTerminal | null = null;
   let dragSink: InputTerminal | null = null;
 
@@ -207,9 +211,15 @@ export const GraphView: Component<Props> = props => {
 
         const rect = e.currentTarget.getBoundingClientRect();
         if (entity.selected) {
-          dragXOffset = e.clientX - rect.left - entity.x - graphOriginX();
-          dragYOffset = e.clientY - rect.top - entity.y - graphOriginY();
-          dragNode = entity;
+          dragNodes = graph.selection.map(node => ({
+            node,
+            xFrom: node.x,
+            yFrom: node.y,
+            xTo: node.x,
+            yTo: node.y,
+            dragXOffset: e.clientX - rect.left - node.x - graphOriginX(),
+            dragYOffset: e.clientY - rect.top - node.y - graphOriginY(),
+          }));
           pointerId = e.pointerId;
           e.currentTarget.setPointerCapture(e.pointerId);
           setDragType('node');
@@ -290,9 +300,11 @@ export const GraphView: Component<Props> = props => {
         });
 
         updateScrollVelocity(e);
-      } else if (dragNode) {
-        dragNode.x = quantize(e.clientX - rect.left - graphOriginX() - dragXOffset);
-        dragNode.y = quantize(e.clientY - rect.top - graphOriginY() - dragYOffset);
+      } else if (dragNodes.length > 0) {
+        dragNodes.forEach(mv => {
+          mv.xTo = mv.node.x = quantize(e.clientX - rect.left - graphOriginX() - mv.dragXOffset);
+          mv.yTo = mv.node.y = quantize(e.clientY - rect.top - graphOriginY() - mv.dragYOffset);
+        });
       }
       updateScrollVelocity(e);
       props.graph.modified = true;
@@ -313,8 +325,10 @@ export const GraphView: Component<Props> = props => {
         }
 
         if (dragSource && dragSink) {
-          props.graph.connectTerminals(dragSource, dragSink);
+          props.graph.connectTerminals(dragSource, dragSink, true);
         }
+      } else if (dragNodes.length > 0) {
+        props.graph.moveNodes(dragNodes);
       }
       setDragType(null);
       setDragConnection({ ts: null, te: null });
@@ -326,7 +340,7 @@ export const GraphView: Component<Props> = props => {
 
     dragSource = null;
     dragSink = null;
-    dragNode = null;
+    dragNodes = [];
     pointerId = -1;
   };
 
@@ -411,7 +425,7 @@ export const GraphView: Component<Props> = props => {
         node.y = quantize(rect.height * 0.5 - graphOriginY() - 60);
         node.selected = true;
         gr.clearSelection();
-        gr.add(node);
+        gr.addNode(node);
       })
     );
   });

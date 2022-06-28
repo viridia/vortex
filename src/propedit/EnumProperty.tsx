@@ -12,7 +12,7 @@ interface Props {
 
 export const EnumProperty: Component<Props> = props => {
   function onChange(value: number) {
-    props.node.paramValues.set(props.parameter.id, value);
+    props.graph.setParamVal(props.node, props.parameter.id, value);
     props.graph.modified = true;
   }
 

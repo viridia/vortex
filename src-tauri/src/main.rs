@@ -30,8 +30,8 @@ fn main() {
   let edit_menu = Submenu::new(
     "Edit",
     Menu::new()
-      .add_native_item(MenuItem::Undo)
-      .add_native_item(MenuItem::Redo)
+      .add_item(CustomMenuItem::new("undo", "Undo").accelerator("CmdOrControl+Z"))
+      .add_item(CustomMenuItem::new("redo", "Redo").accelerator("CmdOrControl+Shift+Z"))
       .add_native_item(MenuItem::Separator)
       .add_native_item(MenuItem::Cut)
       .add_native_item(MenuItem::Copy)

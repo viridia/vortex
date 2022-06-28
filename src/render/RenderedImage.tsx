@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const RenderedImage = (props: Props) => {
-  let canvas: HTMLCanvasElement; // = useRef<HTMLCanvasElement>(null);
+  let canvas: HTMLCanvasElement;
 
   createEffect(() => {
     const node = props.node;

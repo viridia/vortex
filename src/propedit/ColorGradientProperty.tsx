@@ -14,7 +14,7 @@ export const ColorGradientProperty: Component<Props> = props => {
   const { parameter, graph } = props;
 
   const onChange = (newValue: ColorGradient) => {
-    props.node.paramValues.set(parameter.id, newValue);
+    graph.setParamVal(props.node, parameter.id, newValue);
     graph.modified = true;
   };
 

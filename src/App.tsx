@@ -104,7 +104,7 @@ const App: Component = () => {
               const parsed = JSON.parse(json);
               const g = new Graph();
               g.path = filePath;
-              g.fromJs(parsed, registry);
+              g.fromJs(parsed);
               setGraph(g);
               gr.dispose();
             }
@@ -128,6 +128,21 @@ const App: Component = () => {
 
         case 'selectall': {
           gr.selectAll();
+          break;
+        }
+
+        case 'undo': {
+          gr.undo();
+          break;
+        }
+
+        case 'redo': {
+          gr.redo();
+          break;
+        }
+
+        default: {
+          console.warn('unhandled window action', payload);
           break;
         }
       }

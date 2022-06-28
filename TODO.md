@@ -2,23 +2,17 @@
 
 ## Bugs
 
-* Bounds not being recalculated.
 * Better highlighting of selected color stop.
-* Connections drawn incorrectly when bounds are negative.
 
 ## QoL
 
-* Dropdowns for enum types.
 * Fix gradient position combo slider.
+* Drag rectangle selection.
+* Drag node over connection to insert.
 * Automated build and release.
-* Middle mouse button scrolling.
 * Prompt to save unsaved document.
-* Undo / Redo
 * Cut / Copy / Paste
 * Unit tests for code generation (figure out which test runner we are going to use.)
-* Drag selection.
-* Drag multiple nodes.
-* Drag node over connection to insert.
 * Restore drag-to-create logic.
 * Save export path in node.
 

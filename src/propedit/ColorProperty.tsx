@@ -10,25 +10,27 @@ interface Props {
   graph: Graph;
 }
 
-export const ColorProperty: Component<Props> = ({ parameter, node, graph }) => {
+export const ColorProperty: Component<Props> = (props) => {
   const onChange = (value: RGBAColor) => {
     batch(() => {
-      node.paramValues.set(parameter.id, value);
+      const { parameter, node, graph } = props;
+      graph.setParamVal(node, parameter.id, value);
       graph.modified = true;
     });
   };
 
   const color = createMemo(() => {
+    const { parameter, node } = props;
     return node.paramValues.has(parameter.id)
       ? node.paramValues.get(parameter.id)
       : parameter.default !== undefined
       ? parameter.default
       : [0, 0, 0, 1];
-  }, [node, parameter]);
+  });
 
   return (
     <section>
-      <ColorPicker onChange={onChange} value={color()} alpha={!parameter.noAlpha} />
+      <ColorPicker onChange={onChange} value={color()} alpha={!props.parameter.noAlpha} />
     </section>
   );
 };

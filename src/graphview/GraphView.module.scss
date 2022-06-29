@@ -33,3 +33,9 @@
 .graphScrollContent {
   position: absolute;
 }
+
+.selectionRect {
+  position: absolute;
+  background-color: rgba(#445, 0.2);
+  border: 1px dashed lightgray;
+}

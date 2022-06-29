@@ -29,7 +29,7 @@ import { createStore } from 'solid-js/store';
 import { Bounds } from '../graph/Bounds';
 import { NodesToMove } from '../graph/Graph';
 
-type DragType = 'input' | 'output' | 'node' | 'scroll' | null;
+type DragType = 'input' | 'output' | 'node' | 'scroll' | 'select' | null;
 
 interface Props {
   graph: Graph;
@@ -51,6 +51,7 @@ export const GraphView: Component<Props> = props => {
   const [dyScroll, setDYScroll] = createSignal(0);
   const [graphOriginX, setGraphOriginX] = createSignal(0);
   const [graphOriginY, setGraphOriginY] = createSignal(0);
+  const [selectionRect, setSelectionRect] = createSignal<Bounds | null>(null);
   const [dragConnection, setDragConnection] = createStore<ConnectionProps>({
     ts: null,
     xs: 0,
@@ -64,6 +65,8 @@ export const GraphView: Component<Props> = props => {
   const [activeTerminal, setActiveTerminal] = createSignal<Terminal | null>(null);
 
   let pointerId = -1;
+  let anchorX = 0;
+  let anchorY = 0;
   let dragX = 0;
   let dragY = 0;
   let dragNodes: DragNodes[] = [];
@@ -209,8 +212,8 @@ export const GraphView: Component<Props> = props => {
           }
         });
 
-        const rect = e.currentTarget.getBoundingClientRect();
         if (entity.selected) {
+          const rect = e.currentTarget.getBoundingClientRect();
           dragNodes = graph.selection.map(node => ({
             node,
             xFrom: node.x,
@@ -253,6 +256,12 @@ export const GraphView: Component<Props> = props => {
       }
     } else {
       graph.clearSelection();
+      const rect = e.currentTarget.getBoundingClientRect();
+      anchorX = dragX = e.clientX - rect.left - graphOriginX();
+      anchorY = dragY = e.clientY - rect.top - graphOriginY();
+      setSelectionRect(new Bounds(dragX, dragY, dragX, dragY));
+      setDragType('select');
+      e.currentTarget.setPointerCapture(e.pointerId);
     }
   };
 
@@ -260,7 +269,18 @@ export const GraphView: Component<Props> = props => {
     e.preventDefault();
     const rect = e.currentTarget.getBoundingClientRect();
     batch(() => {
-      if (dragType() === 'scroll') {
+      if (dragType() === 'select') {
+        dragX = e.clientX - rect.left - graphOriginX();
+        dragY = e.clientY - rect.top - graphOriginY();
+        setSelectionRect(
+          new Bounds(
+            Math.min(dragX, anchorX),
+            Math.min(dragY, anchorY),
+            Math.max(dragX, anchorX),
+            Math.max(dragY, anchorY)
+          )
+        );
+      } else if (dragType() === 'scroll') {
         onChangeScroll(e.movementX, e.movementY);
       } else if (dragType() === 'input' || dragType() === 'output') {
         const gr = props.graph;
@@ -318,7 +338,19 @@ export const GraphView: Component<Props> = props => {
     }
 
     batch(() => {
-      if (dragType() === 'input' || dragType() === 'output') {
+      if (dragType() === 'select' && selectionRect()) {
+        const rect = selectionRect();
+        props.graph.nodes.forEach(node => {
+          if (
+            node.x < rect.xMax &&
+            node.y < rect.yMax &&
+            node.x + NODE_WIDTH > rect.xMin &&
+            node.y + NODE_HEIGHT > rect.yMin
+          ) {
+            node.selected = true;
+          }
+        });
+      } else if (dragType() === 'input' || dragType() === 'output') {
         if (editConnection()) {
           editConnection().source.disconnect(editConnection());
           editConnection().dest.connection = null;
@@ -330,7 +362,6 @@ export const GraphView: Component<Props> = props => {
       } else if (dragNodes.length > 0) {
         props.graph.moveNodes(dragNodes);
       }
-      setDragType(null);
       setDragConnection({ ts: null, te: null });
       setEditConnection(null);
       setActiveTerminal(null);
@@ -338,6 +369,8 @@ export const GraphView: Component<Props> = props => {
       setDYScroll(0);
     });
 
+    setDragType(null);
+    setSelectionRect(null);
     dragSource = null;
     dragSink = null;
     dragNodes = [];
@@ -477,8 +510,23 @@ export const GraphView: Component<Props> = props => {
           top: `${graphOriginY()}px`,
         }}
       >
+        <Show when={selectionRect()}>
+          {rect => (
+            <div
+              class={styles.selectionRect}
+              style={{
+                left: `${rect.xMin}px`,
+                top: `${rect.yMin}px`,
+                width: `${rect.width}px`,
+                height: `${rect.height}px`,
+              }}
+            />
+          )}
+        </Show>
         <For each={props.graph.nodes}>
-          {node => <NodeRendition node={node} graph={props.graph} />}
+          {node => (
+            <NodeRendition node={node} graph={props.graph} selectionRect={selectionRect()} />
+          )}
         </For>
         <svg
           xmlns="http://www.w3.org/2000/svg"

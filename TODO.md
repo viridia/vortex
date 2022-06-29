@@ -7,14 +7,14 @@
 ## QoL
 
 * Fix gradient position combo slider.
-* Drag rectangle selection.
 * Drag node over connection to insert.
-* Automated build and release.
 * Prompt to save unsaved document.
 * Cut / Copy / Paste
-* Unit tests for code generation (figure out which test runner we are going to use.)
+* Unit tests for code generation - probably using Vitest.
 * Restore drag-to-create logic.
 * Save export path in node.
+* Click on an operator node to get docs on that operator.
+* Digitally sign installers.
 
 ## Node types
 
@@ -32,17 +32,7 @@
 
 ## Future
 
+* Auto untangle / cleanup document.
+* Multi-document support.
 * Use knobs instead of sliders?
 * eslint-solid
-
-## Undo actions:
-
-  * Drag node
-  * Add node
-  * Delete node
-  * Change node param
-  * Add connection
-  * Remove connection
-  * Note: save selection.
-
-  -- or just snapshot the whole thing, it's not that big...?

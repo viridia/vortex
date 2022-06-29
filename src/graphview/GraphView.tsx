@@ -147,6 +147,7 @@ export const GraphView: Component<Props> = props => {
     const dy = dyScroll();
     if (dx !== 0 || dy !== 0) {
       const timer = window.setInterval(() => {
+        console.log(dx, dy);
         onChangeScroll(-dx * 10, -dy * 10);
       }, 16);
 
@@ -319,15 +320,16 @@ export const GraphView: Component<Props> = props => {
           pending: !dragSource || !dragSink,
         });
 
-        updateScrollVelocity(e);
       } else if (dragNodes.length > 0) {
         dragNodes.forEach(mv => {
           mv.xTo = mv.node.x = quantize(e.clientX - rect.left - graphOriginX() - mv.dragXOffset);
           mv.yTo = mv.node.y = quantize(e.clientY - rect.top - graphOriginY() - mv.dragYOffset);
         });
       }
-      updateScrollVelocity(e);
-      props.graph.modified = true;
+
+      if (dragType() !== null) {
+        updateScrollVelocity(e);
+      }
     });
   };
 
@@ -350,6 +352,7 @@ export const GraphView: Component<Props> = props => {
             node.selected = true;
           }
         });
+        props.graph.modified = true;
       } else if (dragType() === 'input' || dragType() === 'output') {
         if (editConnection()) {
           editConnection().source.disconnect(editConnection());
@@ -359,18 +362,21 @@ export const GraphView: Component<Props> = props => {
         if (dragSource && dragSink) {
           props.graph.connectTerminals(dragSource, dragSink, true);
         }
+        props.graph.modified = true;
       } else if (dragNodes.length > 0) {
         props.graph.moveNodes(dragNodes);
+        props.graph.modified = true;
       }
+
       setDragConnection({ ts: null, te: null });
       setEditConnection(null);
       setActiveTerminal(null);
       setDXScroll(0);
       setDYScroll(0);
+      setDragType(null);
+      setSelectionRect(null);
     });
 
-    setDragType(null);
-    setSelectionRect(null);
     dragSource = null;
     dragSink = null;
     dragNodes = [];

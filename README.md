@@ -3,12 +3,21 @@ Vortex
 
 Vortex is a texture generator application. It's intent is to make it easy to create seamlessly
 tileable textures for use in 3D models.
-0
+
 The actual computation of the images is performed by the GPU using WebGL.
 
 ## Screenshot
 
 ![screenshot](./doc/vortex.png "Vortex UI")
+
+## Getting Started
+
+If you just want to run the application, go to the
+[https://github.com/viridia/vortex/releases/latest](Release) page and download the
+appropriate installer for your platform.
+
+Note that the installers are not digitally signed (yet) so you'll have to jump through a few
+extra hoops in order to run the program.
 
 ## Using the application
 

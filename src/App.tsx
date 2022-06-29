@@ -8,12 +8,10 @@ import { GraphView } from './graphview/GraphView';
 import { dialog, invoke } from '@tauri-apps/api';
 import { dirname } from '@tauri-apps/api/path';
 import { readTextFile, writeFile } from '@tauri-apps/api/fs';
-
-import './global.scss';
-import { registry } from './operators/Registry';
 import { settingsManager } from './Settings';
 import { getDefaultDir, setDefaultDir } from './lib/defaultDir';
 import path from 'path';
+import './global.scss';
 
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());

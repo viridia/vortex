@@ -57,7 +57,7 @@ Blends three source images based on an RGB mask.
     super('filter', 'Channel Mask', 'filter_channel_mask');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

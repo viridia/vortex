@@ -130,7 +130,7 @@ Physically-based illumination.
     super('filter', 'Illuminate (PBR)', 'filter_illuminate_pbr');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

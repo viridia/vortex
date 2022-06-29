@@ -1,4 +1,4 @@
-import { documentDir, dirname } from '@tauri-apps/api/path';
+import { documentDir } from '@tauri-apps/api/path';
 
 let defaultDir = await documentDir();
 

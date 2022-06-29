@@ -1,5 +1,4 @@
 import { SettingsManager } from 'tauri-settings';
-import { appWindow, PhysicalPosition, PhysicalSize } from '@tauri-apps/api/window';
 
 interface SettingsSchema {
   windowSize: [number, number];

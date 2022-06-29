@@ -1,4 +1,4 @@
-import { Component, createEffect, createMemo, createSignal, Match, Show, Switch } from 'solid-js';
+import { Component, createMemo, createSignal, Show } from 'solid-js';
 import { Graph, GraphNode } from '../graph';
 import { PropertyEditor } from './PropertyEditor';
 import styles from './PropertyPanel.module.scss';

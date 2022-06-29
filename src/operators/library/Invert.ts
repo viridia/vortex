@@ -28,7 +28,7 @@ Inverts the colors of a grayscale image - white becomes black and vice versa.
     super('filter', 'Invert', 'filter_invert');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

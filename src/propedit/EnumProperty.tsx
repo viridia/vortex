@@ -1,6 +1,6 @@
-import { DataType, Parameter } from '../operators';
+import { Parameter } from '../operators';
 import { Graph, GraphNode } from '../graph';
-import { Component, createMemo, createSignal, For } from 'solid-js';
+import { Component, createMemo, For } from 'solid-js';
 import { Menu, MenuItem, Popover, PopoverButton, PopoverPanel } from 'solid-headless';
 import styles from './EnumProperty.module.scss';
 

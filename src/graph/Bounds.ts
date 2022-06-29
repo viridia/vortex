@@ -1,6 +1,3 @@
-import { batch } from 'solid-js';
-import { makeObservable } from '../lib/makeObservable';
-
 /** Represents a rectangular bounding box. */
 export class Bounds {
   public xMin: number;

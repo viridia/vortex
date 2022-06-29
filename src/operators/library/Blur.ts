@@ -52,7 +52,7 @@ designed to scale with the size of the input, which requires a large amount of s
     super('filter', 'Blur', 'filter_blur');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

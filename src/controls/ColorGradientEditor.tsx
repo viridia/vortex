@@ -1,7 +1,6 @@
 import {
   batch,
   Component,
-  createEffect,
   createMemo,
   createSelector,
   createSignal,
@@ -47,7 +46,7 @@ export const ColorGradientEditor: Component<Props> = props => {
         return index > 0 && index < props.value.length - 1;
       }
 
-      const position = Math.min(1.0, Math.max(0, e.x / e.rect.width));
+      // const position = Math.min(1.0, Math.max(0, e.x / e.rect.width));
       // const stop = getColorAt(gradient, position);
       setSelected(-1);
       // setPosition(position);

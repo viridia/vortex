@@ -18,7 +18,7 @@ export function generate(expr: Expr): OutputChunk {
       }
       return fcall(
         expr.callable.name,
-        expr.args.map((arg, index) => generate(arg))
+        expr.args.map(arg => generate(arg))
       );
     }
 

@@ -71,7 +71,7 @@ converted into a sequence of sawtooth waves.
     super('filter', 'Modulus', 'filter_modulus');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

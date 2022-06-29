@@ -1,5 +1,5 @@
 import { ConnectionJson } from './Connection';
-import { GraphNodeJson, ParamsJson, ParamValue } from './GraphNode';
+import { GraphNodeJson, ParamsJson } from './GraphNode';
 
 export type ActionType = 'move' | 'add' | 'delete' | 'connect' | 'chgparam';
 

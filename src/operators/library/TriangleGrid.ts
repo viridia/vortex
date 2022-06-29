@@ -115,7 +115,7 @@ Generates a triangular grid pattern.
     super('pattern', 'Triangle Grid', 'pattern_trianglegrid');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

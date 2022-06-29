@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal } from 'solid-js';
+import { Component, createSignal } from 'solid-js';
 import { Button } from '../controls/Button';
 import { ButtonGroup } from '../controls/ButtonGroup';
 import { Graph, GraphNode } from '../graph';

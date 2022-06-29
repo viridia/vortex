@@ -68,7 +68,7 @@ const App: Component = () => {
   }
 
   createEffect(() => {
-    const unlisten1 = appWindow.listen('tauri://menu', async ({ event, payload }) => {
+    const unlisten1 = appWindow.listen('tauri://menu', async ({ payload }) => {
       const gr = graph();
       switch (payload) {
         case 'new': {

@@ -58,7 +58,7 @@ Blends two source images based on a grayscale mask.
     super('filter', 'Mask', 'filter_mask');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

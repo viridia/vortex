@@ -1,5 +1,5 @@
-import { Dialog, DialogPanel, DialogTitle, DialogOverlay } from 'solid-headless';
-import { Component, createEffect, JSX, ParentComponent, Show, splitProps } from 'solid-js';
+import { Dialog, DialogPanel, DialogOverlay } from 'solid-headless';
+import { Component, JSX, ParentComponent, Show, splitProps } from 'solid-js';
 import styles from './Modal.module.scss';
 
 import { useTransitionState } from '../hooks/useTransitionState';

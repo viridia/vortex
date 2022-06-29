@@ -7,11 +7,10 @@
 ## QoL
 
 * Fix gradient position combo slider.
-* Drag node over connection to insert.
-* Prompt to save unsaved document.
+* Restore drag-to-create logic.
+* Prompt to save unsaved document before quitting or clearing.
 * Cut / Copy / Paste
 * Unit tests for code generation - probably using Vitest.
-* Restore drag-to-create logic.
 * Save export path in node.
 * Click on an operator node to get docs on that operator.
 * Digitally sign installers.

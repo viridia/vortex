@@ -1,6 +1,6 @@
 import { createEffect, createSignal, JSX, onCleanup } from 'solid-js';
 
-export interface DragState {
+export interface DragState<T extends HTMLElement = HTMLElement> {
   /** Whether a drag is in progress. */
   dragging: boolean;
   /** X-coordinate of the pointer relative to the element bounds. */
@@ -16,12 +16,12 @@ export interface DragState {
   /** Whether the pointer has dragged outside the bounds of the element. */
   inBounds: boolean;
   /** The target element that was clicked on to initiate the drag. */
-  target: HTMLElement | undefined;
+  target: T | undefined;
 }
 
 type PointerEventHandler<T extends HTMLElement = HTMLElement> = JSX.EventHandler<T, PointerEvent>;
 
-type DragMethod<T extends HTMLElement, R> = (dragState: DragState, e: PointerEvent) => R;
+type DragMethod<T extends HTMLElement, R> = (dragState: DragState<T>, e: PointerEvent) => R;
 
 export interface DragMethods<T extends HTMLElement = HTMLElement> {
   onDragStart?: DragMethod<T, boolean | void>;
@@ -48,7 +48,7 @@ export const usePointerDrag = <T extends HTMLElement = HTMLElement>(
 ): PointerEventHandlers<T> => {
   const [target, setTarget] = createSignal<T>();
   const [pointerId, setPointerId] = createSignal(-1);
-  const dragState: DragState = {
+  const dragState: DragState<T> = {
     target: undefined,
     dragging: false,
     x: 0,
@@ -70,8 +70,8 @@ export const usePointerDrag = <T extends HTMLElement = HTMLElement>(
 
   const updateDragPosition = (e: PointerEvent) => {
     dragState.dragging = true;
-    dragState.target = e.target as HTMLElement;
-    dragState.rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    dragState.target = e.target as T;
+    dragState.rect = (e.currentTarget as T).getBoundingClientRect();
     dragState.clientX = e.clientX;
     dragState.clientX = e.clientY;
     dragState.x = e.clientX - dragState.rect.left;

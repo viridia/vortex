@@ -1,4 +1,4 @@
-import { batch, Component, createEffect, createMemo } from 'solid-js';
+import { batch, Component, createMemo } from 'solid-js';
 import { ColorPicker } from '../controls/ColorPicker';
 import { Graph, GraphNode } from '../graph';
 import { Parameter } from '../operators';

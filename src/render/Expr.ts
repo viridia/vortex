@@ -55,6 +55,7 @@ export const call = (callable: FunctionDefn, ...args: ExprOrLiteral[]): CallExpr
   callable,
 });
 
+/** An overloaded function call expression, used when the overload hasn't been decided yet. */
 export interface OverloadCallExpr extends BaseExpr {
   kind: 'ovcall';
   callable: OverloadDefn;
@@ -68,6 +69,7 @@ export const ovcall = (callable: OverloadDefn, ...args: Expr[]): OverloadCallExp
   callable,
 });
 
+/** A local variable definition */
 export interface LocalDefn extends BaseExpr {
   kind: 'deflocal';
   name: string;

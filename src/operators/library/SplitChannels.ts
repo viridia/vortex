@@ -1,7 +1,6 @@
 import { DataType, Input, Operator, Output, Parameter } from '..';
-import { defLocal, Expr, fork, getAttr, refInput, refLocal, refTexCoords } from '../../render/Expr';
+import { defLocal, Expr, getAttr, refInput, refLocal, refTexCoords } from '../../render/Expr';
 import { GraphNode, OutputTerminal } from '../../graph';
-import exp from 'constants';
 import { lowerExprs } from '../../render/pass/transform';
 
 class SplitChannels extends Operator {
@@ -36,7 +35,7 @@ class SplitChannels extends Operator {
   ];
   public readonly params: Parameter[] = [];
 
-  public readonly description = `Produces a tiled copy of the input.`;
+  public readonly description = `Separates the red, green, blue and alpha channels as separate outputs.`;
 
   constructor() {
     super('filter', 'Split Channels', 'filter_split_channels');

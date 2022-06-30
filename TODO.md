@@ -19,7 +19,6 @@
 
 ## Node types
 
-* Color Key
 * Threshold
 * Curve
 * Hi pass filter

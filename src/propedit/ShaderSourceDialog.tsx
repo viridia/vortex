@@ -1,11 +1,13 @@
 import { Component, createEffect, createSignal, Index } from 'solid-js';
 import { Button } from '../controls/Button';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '../controls/Modal';
-import { GraphNode } from '../graph';
-import { clipboard } from '@tauri-apps/api';
+import { Graph, GraphNode } from '../graph';
+import { clipboard, path, dialog, fs } from '@tauri-apps/api';
 import styles from './ShaderSourceDialog.module.scss';
+import { getDefaultDir } from '../lib/defaultDir';
 
 interface Props {
+  graph: Graph;
   node: GraphNode;
   open: boolean;
   onClose: () => void;
@@ -22,8 +24,23 @@ export const ShaderSourceDialog: Component<Props> = props => {
     clipboard.writeText(source());
   };
 
-  const onExport = () => {
-    // TODO
+  const onExport = async () => {
+    const defaultPath = props.graph.path
+      ? await path.dirname(props.graph.path)
+      : getDefaultDir();
+    const saveResult = await dialog.save({
+      defaultPath: await path.join(defaultPath, `${props.node.name.replace(' ', '_')}.txt`),
+      filters: [
+        {
+          name: 'Shader Source Files',
+          extensions: ['txt', 'glsl'],
+        },
+      ],
+    });
+    const savePath = Array.isArray(saveResult) ? saveResult[0] : saveResult;
+    if (savePath) {
+      fs.writeTextFile(savePath, source());
+    }
   };
 
   return (
@@ -51,7 +68,7 @@ export const ShaderSourceDialog: Component<Props> = props => {
         </section>
       </ModalBody>
       <ModalFooter>
-        <Button onClick={onExport} disabled>
+        <Button onClick={onExport}>
           Export as&hellip;
         </Button>
         <Button onClick={onCopy}>

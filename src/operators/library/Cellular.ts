@@ -105,7 +105,7 @@ Generates a periodic Worley noise texture.
     super('generator', 'Cellular', 'gen_cellular');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

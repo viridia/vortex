@@ -57,7 +57,7 @@ class CrossFade extends Operator {
     super('transform', 'Cross-Fade', 'transform_cross_fade');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

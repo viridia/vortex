@@ -134,7 +134,7 @@ Generates a pattern consisting of alternating rows of bricks.
     super('pattern', 'Bricks', 'pattern_bricks');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

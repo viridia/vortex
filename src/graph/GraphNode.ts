@@ -19,13 +19,19 @@ export interface ImageParamData {
   path: string;
 }
 
-export type ParamValue =
-  | string
-  | number
-  | boolean
-  | RGBAColor
-  | ColorGradient
-  | ImageParamData;
+export type ParamValue = string | number | boolean | RGBAColor | ColorGradient | ImageParamData;
+export type ParamValueJson = string | number | boolean | RGBAColor | ColorGradient | ImageParamData;
+export interface ParamsJson {
+  [key: string]: ParamValueJson;
+}
+
+export interface GraphNodeJson {
+  id: number;
+  x: number;
+  y: number;
+  operator: string;
+  params: ParamsJson;
+}
 
 /** A node in the graph. */
 export class GraphNode {
@@ -116,6 +122,7 @@ export class GraphNode {
 
   // Release any GL resources we were holding on to.
   public dispose(renderer: Renderer) {
+    this.deleted = true;
     renderer.deleteShaderResources(this.glResources);
     renderer.deleteTextureResources(this.glResources);
     this.generator.dispose();
@@ -218,8 +225,8 @@ export class GraphNode {
     }
   }
 
-  public toJs(): any {
-    const params: any = {};
+  public toJs(): GraphNodeJson {
+    const params: ParamsJson = {};
     for (const param of this.operator.paramList) {
       if (this.paramValues.has(param.id)) {
         params[param.id] = this.paramValues.get(param.id);
@@ -234,6 +241,20 @@ export class GraphNode {
       operator: this.operator.id,
       params,
     };
+  }
+
+  public unmarshalParams(params: ParamsJson) {
+    this.operator.params.forEach(param => {
+      if (param.type === DataType.GROUP) {
+        param.children?.forEach(childParam => {
+          if (childParam.id in params) {
+            this.paramValues.set(childParam.id, params[childParam.id]);
+          }
+        });
+      } else if (param.id in params) {
+        this.paramValues.set(param.id, params[param.id]);
+      }
+    });
   }
 
   public loadTextures(renderer: Renderer) {

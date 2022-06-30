@@ -1,4 +1,4 @@
-import { Component, createEffect, createMemo, createSignal, Match, Show, Switch } from 'solid-js';
+import { Component, createMemo, createSignal, Show } from 'solid-js';
 import { Graph, GraphNode } from '../graph';
 import { PropertyEditor } from './PropertyEditor';
 import styles from './PropertyPanel.module.scss';
@@ -9,11 +9,11 @@ interface Props {
   graph: Graph;
 }
 
-export const PropertyPanel: Component<Props> = ({ graph }) => {
+export const PropertyPanel: Component<Props> = (props) => {
   const [lockedNode, setLockedNode] = createSignal<GraphNode | null>(null);
   const [tiling, setTiling] = createSignal(1);
 
-  const selectedNode = createMemo(() => (graph.selection.length === 1 ? graph.selection[0] : null));
+  const selectedNode = createMemo(() => (props.graph.selection.length === 1 ? props.graph.selection[0] : null));
   const previewNode = createMemo(() => lockedNode() || selectedNode());
 
   return (
@@ -21,13 +21,14 @@ export const PropertyPanel: Component<Props> = ({ graph }) => {
       <Show when={selectedNode()}>
         {node => (
           <>
-            <PropertyEditor graph={graph} node={node} />
+            <PropertyEditor graph={props.graph} node={node} />
             <NodeActions
+              graph={props.graph}
               node={node}
               locked={lockedNode() !== null}
               tiling={tiling()}
               onSetTiling={setTiling}
-              onLock={(lock) => {
+              onLock={lock => {
                 if (lock) {
                   setLockedNode(selectedNode());
                 } else {

@@ -1,5 +1,6 @@
 module.exports = {
   extends: ['alloy', 'alloy/typescript'],
+  plugins: ['unused-imports'],
   env: {
     // Your environments (which contains several predefined global variables)
     //
@@ -23,5 +24,14 @@ module.exports = {
     '@typescript-eslint/member-ordering': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-invalid-void-type': 'off',
+    'unused-imports/no-unused-imports': 'warn',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'none',
+      },
+    ],
   },
 };

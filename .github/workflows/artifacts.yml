@@ -1,6 +1,10 @@
-name: "upload"
+name: "Upload Artifacts"
 
-on: pull_request
+# on: pull_request
+on:
+  push:
+    branches:
+      - release
 
 jobs:
   create-release:
@@ -24,8 +28,8 @@ jobs:
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: vortex-v${{ env.PACKAGE_VERSION }},
-              name: "Vortex v${{ env.PACKAGE_VERSION }}",
+              tag_name: `vortex-v${process.env.PACKAGE_VERSION}`,
+              name: `Vortex v${process.env.PACKAGE_VERSION}`,
               body: "See the assets to download this version and install.",
               draft: true,
               prerelease: false

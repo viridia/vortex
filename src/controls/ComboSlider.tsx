@@ -12,7 +12,6 @@ interface Props {
   max: number;
   precision?: number; // 0 = integer, undefined == unlimited
   increment?: number;
-  logScale?: boolean;
   enumVals?: string[];
   classList?: {
     [k: string]: boolean | undefined;
@@ -27,7 +26,6 @@ export const ComboSlider: Component<Props> = ({
   max,
   precision,
   increment = 1,
-  logScale = false,
   classList,
   enumVals,
   onChange,
@@ -69,12 +67,7 @@ export const ComboSlider: Component<Props> = ({
 
   function valueFromX(dx: number): number {
     let newValue = dragValue();
-    if (logScale) {
-      newValue = 2 ** (Math.log2(newValue) + dx * Math.log2(max - min));
-    } else {
-      newValue += dx * (max - min);
-    }
-    return newValue + min;
+    return Math.max(min, Math.min(max, newValue + dx * (max - min)));
   }
 
   const dragMethods = usePointerDrag({
@@ -92,10 +85,11 @@ export const ComboSlider: Component<Props> = ({
 
   const onDoubleClick = () => {
     if (!enumVals && inputEl) {
-      inputEl.value = value.toString();
-      inputEl.select();
+      inputEl.value = value().toString();
       setTextActive(true);
       window.setTimeout(() => {
+        const length = inputEl.value.length;
+        inputEl.setSelectionRange(length, length);
         inputEl.focus();
       }, 5);
     }
@@ -125,28 +119,21 @@ export const ComboSlider: Component<Props> = ({
     }
   };
 
-  const backgroundImage = createMemo(() => {
-    const percent = enumVals ? 100 : ((value() - min) * 100) / (max - min);
-    return `linear-gradient(
-      to right,
-      var(--colorComboBgBar) 0,
-      var(--colorComboBgBar) ${percent}%,
-      var(--colorComboBg) ${percent}%,
-      var(--colorComboBg) 100%)`;
+  const percent = createMemo(() => {
+    return enumVals ? 100 : ((value() - min) * 100) / (max - min);
   });
 
   return (
     <div
-      classList={{ [styles.comboSlider]: true, textActive: textActive(), ...classList }}
-      ref={element}
-      style={{ 'background-image': backgroundImage() }}
+      classList={{ [styles.comboSlider]: true, [styles.textActive]: textActive(), ...classList }}
     >
       <MomentaryButton
         classList={{ [styles.arrow]: true, [styles.arrowLeft]: true }}
         onChange={onLeftChange}
         onHeld={onLeftHeld}
       />
-      <div class={styles.container} {...dragMethods} onDblClick={onDoubleClick}>
+      <div class={styles.container} {...dragMethods} onDblClick={onDoubleClick} ref={element}>
+        <div class={styles.track} style={{ width: `${percent()}%` }} />
         <span class={styles.name}>{name}: </span>
         <span class={styles.value}>{enumVals ? enumVals[value()] : value()}</span>
         <input

@@ -30,13 +30,13 @@ fn main() {
   let edit_menu = Submenu::new(
     "Edit",
     Menu::new()
-      .add_native_item(MenuItem::Undo)
-      .add_native_item(MenuItem::Redo)
+      .add_item(CustomMenuItem::new("undo", "Undo").accelerator("CmdOrControl+Z"))
+      .add_item(CustomMenuItem::new("redo", "Redo").accelerator("CmdOrControl+Shift+Z"))
       .add_native_item(MenuItem::Separator)
       .add_native_item(MenuItem::Cut)
       .add_native_item(MenuItem::Copy)
       .add_native_item(MenuItem::Paste)
-      .add_native_item(MenuItem::SelectAll),
+      .add_item(CustomMenuItem::new("selectall", "Select All").accelerator("CmdOrControl+A")),
   );
   let window_menu = Submenu::new(
     "Window",
@@ -54,6 +54,12 @@ fn main() {
         .add_submenu(window_menu),
     )
     // .menu(tauri::Menu::os_default(&context.package_info().name))
+    .invoke_handler(tauri::generate_handler![show_main_window])
     .run(context)
     .expect("error while running tauri application");
+}
+
+#[tauri::command]
+fn show_main_window(window: tauri::Window) {
+  window.show().unwrap();
 }

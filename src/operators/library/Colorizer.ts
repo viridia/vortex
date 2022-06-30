@@ -53,7 +53,7 @@ class Colorizer extends Operator {
     super('filter', 'Colorize', 'filter_colorize');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

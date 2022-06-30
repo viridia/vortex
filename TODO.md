@@ -1,32 +1,29 @@
 ## TODO
 
-## MVP
+## Bugs
 
-* Add export shader.
-* Add export image
+* Better highlighting of selected color stop.
 
 ## QoL
 
-* Fix position combo slider.
-* Add turbulence
-* Think about making preview image optional on some node types.
-* Automated build and release.
-* Save window size.
-* Save window position.
-* Dropdowns for enum types.
-* Change node title based on settings.
-* Redo appearance of combo slider, it's too clever.
-* Middle mouse button scrolling.
+* Fix gradient position combo slider.
+* Restore drag-to-create logic.
+* Prompt to save unsaved document before quitting or clearing.
+* Cut / Copy / Paste
+* Unit tests for code generation - probably using Vitest.
+* Save export path in node.
+* Click on an operator node to get docs on that operator.
+* Digitally sign installers.
 
 ## Node types
 
+* Threshold
 * Curve
 * Hi pass filter
 * Edge detect
-* HSL Adjust
 * RGB Adjust
 * Sharpen
-* 2D transform
+* 2D transform (offset)
 * Starfield
 * Stripes
 * Textile
@@ -34,5 +31,7 @@
 
 ## Future
 
+* Auto untangle / cleanup document.
+* Multi-document support.
 * Use knobs instead of sliders?
 * eslint-solid

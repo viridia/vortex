@@ -115,7 +115,7 @@ Generates a tiled pattern of hexagons.
     super('pattern', 'Hex Grid', 'pattern_hexgrid');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

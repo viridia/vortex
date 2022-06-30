@@ -152,7 +152,7 @@ Sums together up to three wave generators.
     super('generator', 'Waves', 'gen_waves');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

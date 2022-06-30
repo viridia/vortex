@@ -13,25 +13,25 @@ export const CompassRose: Component<Props> = ({ onScroll, onScrollToCenter }) =>
       classList={{ [styles.arrow]: true, [styles.north]: true }}
       period={5}
       delay={0}
-      onHeld={() => onScroll(0, 2)}
+      onHeld={() => onScroll(0, -2)}
     />
     <MomentaryButton
       classList={{ [styles.arrow]: true, [styles.east]: true }}
       period={5}
       delay={0}
-      onHeld={() => onScroll(-2, 0)}
+      onHeld={() => onScroll(2, 0)}
     />
     <MomentaryButton
       classList={{ [styles.arrow]: true, [styles.south]: true }}
       period={5}
       delay={0}
-      onHeld={() => onScroll(0, -2)}
+      onHeld={() => onScroll(0, 2)}
     />
     <MomentaryButton
       classList={{ [styles.arrow]: true, [styles.west]: true }}
       period={5}
       delay={0}
-      onHeld={() => onScroll(2, 0)}
+      onHeld={() => onScroll(-2, 0)}
     />
     <button class={styles.center} onClick={onScrollToCenter} />
   </div>

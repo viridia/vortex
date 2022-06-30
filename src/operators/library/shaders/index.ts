@@ -16,7 +16,6 @@ import illuminate_pbr from './illuminate_pbr.glsl';
 import mask from './mask.glsl';
 import modulus from './modulus.glsl';
 import periodicNoise from './periodic-noise.glsl';
-import periodicNoise2 from './periodic-noise2.glsl';
 import permute from './permute.glsl';
 import pnoise from './pnoise.glsl';
 import pworley from './pworley.glsl';
@@ -46,7 +45,6 @@ export const byName: { [name: string]: string } = {
   mask,
   modulus,
   'periodic-noise': periodicNoise,
-  'periodic-noise2': periodicNoise2,
   permute,
   pnoise,
   pworley,

@@ -89,7 +89,7 @@ Perform Hermite interpolation between two values.
     super('filter', 'Smoothstep', 'filter_smoothstep');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

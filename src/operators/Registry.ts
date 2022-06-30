@@ -1,4 +1,3 @@
-import { createContext } from 'solid-js';
 import { Operator } from './Operator';
 
 /** Maintains the list of operators. */

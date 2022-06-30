@@ -125,7 +125,7 @@ Illuminate the input texture.
     super('filter', 'Illuminate', 'filter_illuminate');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

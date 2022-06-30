@@ -22,7 +22,7 @@
     border-bottom: none;
   }
 
-  &.textActive > .center {
+  &.textActive > div {
     > .name,
     > .value {
       display: none;
@@ -41,8 +41,7 @@
   width: 25px;
   &:after {
     position: relative;
-    font-size: 12px;
-    line-height: 24px;
+    font-size: 11px;
     color: var(--colorComboArrowIcon);
   }
 
@@ -78,18 +77,29 @@
   vertical-align: middle;
 }
 
+.track {
+  position: absolute;
+  background-color: var(--colorComboTrack);
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+}
+
 .name {
   color: var(--colorComboName);
   margin-right: 4px;
+  z-index: 2;
 }
 
 .value {
   color: var(--colorComboValue);
+  z-index: 2;
 }
 
 .input {
   display: none;
   background-color: transparent;
+  color: var(--colorComboValue);
   position: absolute;
   text-align: center;
   left: 0;

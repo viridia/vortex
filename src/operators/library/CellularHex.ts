@@ -105,7 +105,7 @@ Generates a periodic Worley noise texture in a hexagonal pattern.
     super('generator', 'Cellular Hexagons', 'gen_cellular_hex');
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 

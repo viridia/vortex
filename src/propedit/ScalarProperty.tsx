@@ -12,11 +12,7 @@ interface Props {
 export const ScalarProperty: Component<Props> = props => {
   function onChange(value: number) {
     const { parameter, node, graph } = props;
-    if (parameter.enumVals) {
-      node.paramValues.set(parameter.id, parameter.enumVals[value].value);
-    } else {
-      node.paramValues.set(parameter.id, value);
-    }
+    graph.setParamVal(node, parameter.id, value);
     graph.modified = true;
   }
 
@@ -61,7 +57,6 @@ export const ScalarProperty: Component<Props> = props => {
       min={min}
       increment={increment}
       precision={precision}
-      logScale={parameter.logScale}
       enumVals={parameter.enumVals?.map(ev => ev.name)}
       onChange={onChange}
     />

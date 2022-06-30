@@ -1,8 +1,14 @@
 name: "Publish"
+
+# Temporarily disabled.
 on:
   push:
-    branches:
-      - release
+    branches-ignore:
+      - '**'
+# on:
+#   push:
+#     branches:
+#       - release
 
 jobs:
   publish-tauri:

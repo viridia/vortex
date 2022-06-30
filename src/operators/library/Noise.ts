@@ -3,10 +3,10 @@ import { Expr, defineFn, refTexCoords, refUniform } from '../../render/Expr';
 import { GraphNode } from '../../graph';
 import { makeFunctionType } from '../FunctionDefn';
 
-const IMPORTS = new Set(['steppers', 'permute', 'pnoise', 'periodic-noise2']);
+const IMPORTS = new Set(['steppers', 'permute', 'pnoise', 'periodic-noise']);
 
-export const noise2 = defineFn({
-  name: 'periodicNoise2',
+const noise2Turbo = defineFn({
+  name: 'periodicNoiseTurbulence',
   type: makeFunctionType({
     result: DataType.FLOAT,
     args: [
@@ -15,7 +15,7 @@ export const noise2 = defineFn({
       DataType.INTEGER,
       DataType.FLOAT,
       DataType.INTEGER,
-      DataType.INTEGER,
+      DataType.FLOAT,
       DataType.FLOAT,
     ],
   }),
@@ -36,7 +36,7 @@ class Noise extends Operator {
       name: 'Scale X',
       type: DataType.INTEGER,
       min: 1,
-      max: 100,
+      max: 32,
       default: 1,
     },
     {
@@ -44,7 +44,7 @@ class Noise extends Operator {
       name: 'Scale Y',
       type: DataType.INTEGER,
       min: 1,
-      max: 100,
+      max: 32,
       default: 1,
     },
     {
@@ -58,28 +58,29 @@ class Noise extends Operator {
       default: 0,
     },
     {
-      id: 'start_band',
-      name: 'Start Band',
-      type: DataType.INTEGER,
-      min: 1,
-      max: 12,
-      default: 1,
-    },
-    {
-      id: 'end_band',
-      name: 'End Band',
+      id: 'num_octaves',
+      name: 'Octaves',
       type: DataType.INTEGER,
       min: 1,
       max: 12,
       default: 8,
     },
     {
-      id: 'persistence',
-      name: 'Persistence',
+      id: 'roughness',
+      name: 'Roughness',
       type: DataType.FLOAT,
       min: 0,
       max: 1,
       default: 0.5,
+      precision: 2,
+    },
+    {
+      id: 'turbulence',
+      name: 'Turbulence',
+      type: DataType.FLOAT,
+      min: 0,
+      max: 4,
+      default: 0,
       precision: 2,
     },
   ];
@@ -88,23 +89,23 @@ Generates a periodic Perlin noise texture.
 * **Scale X** is the overall scaling factor along the x-axis.
 * **Scale Y** is the overall scaling factor along the y-axis.
 * **Z Offset** is the z-coordinate within the 3D noise space.
-* **Start Band** and **End Band** control the range of frequency bands. Each band represents
-  one octave of noise.
-* **Persistance** determines the amplitude falloff from one frequencey band to the next.
+* **Octaves** is the number of octaves of noise to generate.
+* **Persistance** determines the amplitude falloff from one octave to the next.
+* **Turbulance** distorts the noise coordinate space using a secondary noise signal.
 `;
 
   constructor() {
-    super('generator', 'Perlin Noise', 'gen_noise');
+    super('generator', 'Noise', 'gen_noise');
   }
 
   public getCode(node: GraphNode): Expr {
-    return noise2(
+    return noise2Turbo(
       refTexCoords(),
       ...this.params.map(param => refUniform(param.id, param.type, node))
     );
   }
 
-  public getImports(node: GraphNode): Set<string> {
+  public getImports(_node: GraphNode): Set<string> {
     return IMPORTS;
   }
 }

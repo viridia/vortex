@@ -37,13 +37,20 @@ $coolGray2: #558;
 
   --colorControlBorder: #{$gray6};
 
-  --colorComboBg: #{$gray7};
-  --colorComboBgBar: #{$gray6};
-  --colorComboArrowIcon: #{$gray3};
+  --colorComboArrowIcon: #{$gray4};
   --colorComboArrowIconActive: #{$gray2};
   --colorComboArrowBgHover: #{lighten($gray7, 3%)};
   --colorComboName: #{$gray3};
   --colorComboValue: #{$gray2};
+  --colorComboTrack: #{$gray7};
+
+  --colorMenuBg: #{$gray6};
+  --colorMenuBorder: #{$gray9};
+  --colorMenuShadow: #{$gray10};
+  --colorMenuText: #{$gray2};
+  --colorMenuArrow: #{$gray4};
+  --colorMenuTextHover: #{$gray1};
+  --colorMenuBgHover: #{$coolGray2};
 
   --colorParamGroupBg: #{$gray6};
   --colorParamGroupHeaderBg: #{lighten($gray6, 5%)};

@@ -3,6 +3,7 @@ import { Graph, GraphNode } from '../graph';
 import { DataType, Parameter } from '../operators';
 import { ColorGradientProperty } from './ColorGradientProperty';
 import { ColorProperty } from './ColorProperty';
+import { EnumProperty } from './EnumProperty';
 import { ImageProperty } from './ImageProperty';
 import styles from './PropertyEditor.module.scss';
 import { ScalarProperty } from './ScalarProperty';
@@ -67,6 +68,9 @@ export function PropertyEditor({ node, graph }: Props) {
             <For each={group.children}>
               {param => (
                 <Switch fallback={<div>Unsupported param type: {param.type}</div>}>
+                  <Match when={param.type === DataType.INTEGER && param.enumVals}>
+                    <EnumProperty graph={graph} node={node} parameter={param} />
+                  </Match>
                   <Match when={param.type === DataType.FLOAT || param.type === DataType.INTEGER}>
                     <ScalarProperty graph={graph} node={node} parameter={param} />
                   </Match>

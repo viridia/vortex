@@ -7,12 +7,10 @@ import styles from './OperatorCatalog.module.scss';
 interface Props {
   selected: () => Operator | null;
   onSelect: (id: string) => void;
+  onAdd: () => void;
 }
 
-// const img = document.createElement('img');
-// img.src = opDragImg;
-
-export const OperatorCatalog: Component<Props> = ({ selected, onSelect }) => {
+export const OperatorCatalog: Component<Props> = ({ selected, onSelect, onAdd }) => {
   const opList = registry.list.map(
     (op: Operator) => [op.group, op.name, op] as [string, string, Operator]
   );
@@ -31,12 +29,9 @@ export const OperatorCatalog: Component<Props> = ({ selected, onSelect }) => {
                 e.preventDefault();
                 onSelect(op.id);
               }}
-              // onDragStart={(e: DragEvent) => {
-              //   e.dataTransfer.dropEffect = 'copy';
-              //   e.dataTransfer.setDragImage(img, 45, 60);
-              //   e.dataTransfer.setData('application/x-vortex-operator', `${op.id}`);
-              // }}
-              // draggable={true}
+              onDblClick={e => {
+                onAdd();
+              }}
             >
               <div class={styles.rowGroup}>{group}</div>
               <div class={styles.rowName}>{name}</div>

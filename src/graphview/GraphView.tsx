@@ -13,7 +13,6 @@ import { ConnectionProps, ConnectionRendition } from './ConnectionRendition';
 import { NodeRendition } from './NodeRendition';
 import { isInputTerminal } from '../graph/InputTerminal';
 import { isOutputTerminal } from '../graph/OutputTerminal';
-import { registry } from '../operators/Registry';
 import {
   batch,
   Component,
@@ -27,32 +26,32 @@ import {
 } from 'solid-js';
 import styles from './GraphView.module.scss';
 import { createStore } from 'solid-js/store';
+import { Bounds } from '../graph/Bounds';
+import { NodesToMove } from '../graph/Graph';
 
-type DragType = 'input' | 'output' | 'node' | null;
+type DragType = 'input' | 'output' | 'node' | 'scroll' | 'select' | null;
 
 interface Props {
   graph: Graph;
-  ref: (elt: HTMLDivElement) => void;
 }
 
-interface State {
-  pointerId: number;
-  dragX: number;
-  dragY: number;
+const DOC_MARGIN = 32;
+const NODE_WIDTH = 94;
+const NODE_HEIGHT = 120;
+
+interface DragNodes extends NodesToMove {
   dragXOffset: number;
   dragYOffset: number;
-  dragNode: GraphNode | null;
-  dragSource: OutputTerminal | null;
-  dragSink: InputTerminal | null;
 }
 
 export const GraphView: Component<Props> = props => {
-  let scrollEl: HTMLDivElement;
-  let scrollContentEl: HTMLDivElement;
-
+  let viewEl: HTMLDivElement;
   const [dragType, setDragType] = createSignal<DragType>(null);
   const [dxScroll, setDXScroll] = createSignal(0);
   const [dyScroll, setDYScroll] = createSignal(0);
+  const [graphOriginX, setGraphOriginX] = createSignal(0);
+  const [graphOriginY, setGraphOriginY] = createSignal(0);
+  const [selectionRect, setSelectionRect] = createSignal<Bounds | null>(null);
   const [dragConnection, setDragConnection] = createStore<ConnectionProps>({
     ts: null,
     xs: 0,
@@ -66,18 +65,47 @@ export const GraphView: Component<Props> = props => {
   const [activeTerminal, setActiveTerminal] = createSignal<Terminal | null>(null);
 
   let pointerId = -1;
+  let anchorX = 0;
+  let anchorY = 0;
   let dragX = 0;
   let dragY = 0;
-  let dragXOffset = 0;
-  let dragYOffset = 0;
-  let dragNode: GraphNode | null = null;
+  let dragNodes: DragNodes[] = [];
   let dragSource: OutputTerminal | null = null;
   let dragSink: InputTerminal | null = null;
 
-  const onChangeScroll = (dx: number, dy: number) => {
-    if (scrollEl) {
-      scrollEl.scrollBy(-dx, -dy);
+  const graphBounds = createMemo(() => {
+    const graph = props.graph;
+    const bounds = new Bounds();
+    graph.nodes.forEach(node => {
+      bounds.expandVertex(node.x - DOC_MARGIN, node.y - DOC_MARGIN);
+      bounds.expandVertex(node.x + NODE_WIDTH + DOC_MARGIN, node.y + NODE_HEIGHT + DOC_MARGIN);
+    });
+    if (bounds.empty) {
+      bounds.set(0, 0, 0, 0);
     }
+    return bounds;
+  });
+
+  const scrollLimits = () => {
+    const bounds = graphBounds();
+    const limits = new Bounds();
+    limits.xMin = -bounds.xMax + NODE_WIDTH;
+    limits.xMax = viewEl.offsetWidth - bounds.xMin - NODE_WIDTH;
+    limits.yMin = -bounds.yMax + NODE_HEIGHT;
+    limits.yMax = viewEl.offsetHeight - bounds.yMin - NODE_HEIGHT;
+    return limits;
+  };
+
+  const onChangeScroll = (dx: number, dy: number) => {
+    batch(() => {
+      const limits = scrollLimits();
+      setGraphOriginX(x => {
+        return Math.min(limits.xMax, Math.max(limits.xMin, x + dx));
+      });
+      setGraphOriginY(y => {
+        return Math.min(limits.yMax, Math.max(limits.yMin, y + dy));
+      });
+    });
   };
 
   const pickGraphEntity = (x: number, y: number): GraphNode | Terminal | undefined => {
@@ -97,19 +125,18 @@ export const GraphView: Component<Props> = props => {
   };
 
   const updateScrollVelocity: JSX.EventHandler<HTMLElement | SVGElement, PointerEvent> = e => {
-    const parentEl = e.currentTarget.parentElement?.parentElement as HTMLElement;
     let dxScroll = 0;
-    if (e.clientX < parentEl.offsetLeft) {
+    if (e.offsetX < 0) {
       dxScroll = -1;
-    } else if (e.clientX > parentEl.offsetLeft + parentEl.offsetWidth) {
+    } else if (e.offsetX > viewEl.offsetWidth) {
       dxScroll = 1;
     }
     setDXScroll(dxScroll);
 
     let dyScroll = 0;
-    if (e.clientY < parentEl.offsetTop) {
+    if (e.offsetY < 0) {
       dyScroll = -1;
-    } else if (e.clientY > parentEl.offsetTop + parentEl.offsetHeight) {
+    } else if (e.offsetY > viewEl.offsetHeight) {
       dyScroll = 1;
     }
     setDYScroll(dyScroll);
@@ -120,6 +147,7 @@ export const GraphView: Component<Props> = props => {
     const dy = dyScroll();
     if (dx !== 0 || dy !== 0) {
       const timer = window.setInterval(() => {
+        console.log(dx, dy);
         onChangeScroll(-dx * 10, -dy * 10);
       }, 16);
 
@@ -128,17 +156,10 @@ export const GraphView: Component<Props> = props => {
   });
 
   const scrollToCenter = () => {
-    if (scrollEl && scrollContentEl) {
-      const scrollRect = scrollEl.getBoundingClientRect();
-      const contentRect = scrollContentEl.getBoundingClientRect();
-      scrollEl.scrollTo(
-        (contentRect.width - scrollRect.width) / 2,
-        (contentRect.height - scrollRect.height) / 2
-      );
-    }
+    const bounds = graphBounds();
+    setGraphOriginX((viewEl.offsetWidth - bounds.width) * 0.5 - bounds.xMin);
+    setGraphOriginY((viewEl.offsetHeight - bounds.height) * 0.5 - bounds.yMin);
   };
-
-  // const bounds = props.graph.bounds;
 
   // const onDragEnter: JSX.EventHandler<HTMLElement, DragEvent> = e => {
   //   if (e.dataTransfer.types.indexOf('application/x-vortex-operator') >= 0) {
@@ -175,7 +196,11 @@ export const GraphView: Component<Props> = props => {
     e.preventDefault();
     const graph = props.graph;
     const entity = pickGraphEntity(e.clientX, e.clientY);
-    if (entity) {
+    if (e.button === 1) {
+      setDragType('scroll');
+      pointerId = e.pointerId;
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } else if (entity) {
       if (entity instanceof GraphNode) {
         batch(() => {
           if (e.ctrlKey || e.metaKey) {
@@ -188,19 +213,25 @@ export const GraphView: Component<Props> = props => {
           }
         });
 
-        const rect = e.currentTarget.getBoundingClientRect();
         if (entity.selected) {
-          dragXOffset = e.clientX - rect.left - entity.x;
-          dragYOffset = e.clientY - rect.top - entity.y;
-          dragNode = entity;
+          const rect = e.currentTarget.getBoundingClientRect();
+          dragNodes = graph.selection.map(node => ({
+            node,
+            xFrom: node.x,
+            yFrom: node.y,
+            xTo: node.x,
+            yTo: node.y,
+            dragXOffset: e.clientX - rect.left - node.x - graphOriginX(),
+            dragYOffset: e.clientY - rect.top - node.y - graphOriginY(),
+          }));
           pointerId = e.pointerId;
           e.currentTarget.setPointerCapture(e.pointerId);
           setDragType('node');
         }
       } else if (entity instanceof AbstractTerminal) {
         const rect = e.currentTarget.getBoundingClientRect();
-        dragX = e.clientX - rect.left + graph.bounds.xMin;
-        dragY = e.clientY - rect.top + graph.bounds.yMin;
+        dragX = e.clientX - rect.left - graphOriginX();
+        dragY = e.clientY - rect.top - graphOriginY();
         setActiveTerminal(null);
         if (isOutputTerminal(entity)) {
           dragSource = entity;
@@ -226,6 +257,12 @@ export const GraphView: Component<Props> = props => {
       }
     } else {
       graph.clearSelection();
+      const rect = e.currentTarget.getBoundingClientRect();
+      anchorX = dragX = e.clientX - rect.left - graphOriginX();
+      anchorY = dragY = e.clientY - rect.top - graphOriginY();
+      setSelectionRect(new Bounds(dragX, dragY, dragX, dragY));
+      setDragType('select');
+      e.currentTarget.setPointerCapture(e.pointerId);
     }
   };
 
@@ -233,12 +270,23 @@ export const GraphView: Component<Props> = props => {
     e.preventDefault();
     const rect = e.currentTarget.getBoundingClientRect();
     batch(() => {
-      if (dragType() === 'input' || dragType() === 'output') {
-        const rect = e.currentTarget.getBoundingClientRect();
+      if (dragType() === 'select') {
+        dragX = e.clientX - rect.left - graphOriginX();
+        dragY = e.clientY - rect.top - graphOriginY();
+        setSelectionRect(
+          new Bounds(
+            Math.min(dragX, anchorX),
+            Math.min(dragY, anchorY),
+            Math.max(dragX, anchorX),
+            Math.max(dragY, anchorY)
+          )
+        );
+      } else if (dragType() === 'scroll') {
+        onChangeScroll(e.movementX, e.movementY);
+      } else if (dragType() === 'input' || dragType() === 'output') {
         const gr = props.graph;
-        dragX = e.clientX - rect.left + gr.bounds.xMin;
-        dragY = e.clientY - rect.top + gr.bounds.yMin;
-
+        dragX = e.offsetX - graphOriginX();
+        dragY = e.offsetY - graphOriginY();
         const entity = pickGraphEntity(e.clientX, e.clientY);
         if (dragType() === 'input') {
           dragSink =
@@ -272,21 +320,17 @@ export const GraphView: Component<Props> = props => {
           pending: !dragSource || !dragSink,
         });
 
-        updateScrollVelocity(e);
-      } else if (dragNode) {
-        dragNode.x = quantize(
-          e.clientX - rect.left - dragXOffset
-          // Math.min(rect.width, Math.max(0, e.clientX - rect.left)) - dragXOffset
-        );
-        dragNode.y = quantize(
-          e.clientY - rect.top - dragYOffset
-          // Math.min(rect.height, Math.max(0, e.clientY - rect.top)) - dragYOffset
-        );
+      } else if (dragNodes.length > 0) {
+        dragNodes.forEach(mv => {
+          mv.xTo = mv.node.x = quantize(e.clientX - rect.left - graphOriginX() - mv.dragXOffset);
+          mv.yTo = mv.node.y = quantize(e.clientY - rect.top - graphOriginY() - mv.dragYOffset);
+        });
       }
-      props.graph.modified = true;
-    });
 
-    updateScrollVelocity(e);
+      if (dragType() !== null) {
+        updateScrollVelocity(e);
+      }
+    });
   };
 
   const onPointerUp: JSX.EventHandler<HTMLElement, PointerEvent> = e => {
@@ -296,29 +340,47 @@ export const GraphView: Component<Props> = props => {
     }
 
     batch(() => {
-      if (dragType() === 'input' || dragType() === 'output') {
+      if (dragType() === 'select' && selectionRect()) {
+        const rect = selectionRect();
+        props.graph.nodes.forEach(node => {
+          if (
+            node.x < rect.xMax &&
+            node.y < rect.yMax &&
+            node.x + NODE_WIDTH > rect.xMin &&
+            node.y + NODE_HEIGHT > rect.yMin
+          ) {
+            node.selected = true;
+          }
+        });
+        props.graph.modified = true;
+      } else if (dragType() === 'input' || dragType() === 'output') {
         if (editConnection()) {
           editConnection().source.disconnect(editConnection());
           editConnection().dest.connection = null;
         }
 
         if (dragSource && dragSink) {
-          props.graph.connectTerminals(dragSource, dragSink);
+          props.graph.connectTerminals(dragSource, dragSink, true);
         }
+        props.graph.modified = true;
+      } else if (dragNodes.length > 0) {
+        props.graph.moveNodes(dragNodes);
+        props.graph.modified = true;
       }
-      setDragType(null);
+
       setDragConnection({ ts: null, te: null });
       setEditConnection(null);
       setActiveTerminal(null);
       setDXScroll(0);
       setDYScroll(0);
+      setDragType(null);
+      setSelectionRect(null);
     });
 
     dragSource = null;
     dragSink = null;
-    dragNode = null;
+    dragNodes = [];
     pointerId = -1;
-    props.graph.computeBounds();
   };
 
   const onConnectionPointerDown: JSX.EventHandler<SVGElement, PointerEvent> = e => {
@@ -344,8 +406,9 @@ export const GraphView: Component<Props> = props => {
       const ds = (x - ts.x - ts.node.x - 10) ** 2 + (y - ts.y - ts.node.y - 10) ** 2;
 
       const rect = parentEl.getBoundingClientRect();
-      dragX = e.clientX - rect.left + gr.bounds.xMin;
-      dragY = e.clientY - rect.top + gr.bounds.yMin;
+      const bounds = graphBounds();
+      dragX = e.clientX - rect.left + bounds.xMin;
+      dragY = e.clientY - rect.top + bounds.yMin;
 
       if (ds > de) {
         dragSource = ts;
@@ -373,6 +436,13 @@ export const GraphView: Component<Props> = props => {
     }
   };
 
+  const onWheel: JSX.EventHandler<HTMLElement, WheelEvent> = e => {
+    e.preventDefault();
+    batch(() => {
+      onChangeScroll(-e.deltaX, -e.deltaY);
+    });
+  };
+
   createEffect(() => {
     const active = activeTerminal();
     if (active) {
@@ -380,6 +450,31 @@ export const GraphView: Component<Props> = props => {
       onCleanup(() => {
         active.hover = false;
       });
+    }
+  });
+
+  createEffect(() => {
+    const gr = props.graph;
+    onCleanup(
+      gr.subscribe('add', op => {
+        const gr = props.graph;
+        const node = new GraphNode(op, gr.nextId());
+        const rect = viewEl.getBoundingClientRect();
+        node.x = quantize(rect.width * 0.5 - graphOriginX() - 45);
+        node.y = quantize(rect.height * 0.5 - graphOriginY() - 60);
+        node.selected = true;
+        gr.clearSelection();
+        gr.addNode(node);
+      })
+    );
+  });
+
+  createEffect(() => {
+    if (dxScroll() || dyScroll()) {
+      const timer = window.setInterval(() => {
+        onChangeScroll(dxScroll(), dyScroll());
+      }, 16);
+      onCleanup(() => window.clearInterval(timer));
     }
   });
 
@@ -396,58 +491,70 @@ export const GraphView: Component<Props> = props => {
       .flat(2);
   });
 
+  // SVG view box string
   const viewBox = createMemo(() => {
-    const bounds = props.graph.bounds;
-    return `${bounds.xMin} ${bounds.yMin} ${bounds.width} ${bounds.height}`;
+    const b = graphBounds();
+    return `${b.xMin} ${b.yMin} ${b.width} ${b.height}`;
   });
 
-  const setRef = (element: HTMLDivElement) => {
-    scrollEl = element;
-    props.ref(element);
-  };
-
   return (
-    <section class={styles.graph} id="graph">
-      <div classList={{ [styles.graphScroll]: true, 'rounded-scrollbars': true }} ref={setRef}>
-        <div
-          ref={scrollContentEl}
-          class={styles.graphScrollContent}
-          // onDragEnter={onDragEnter}
-          // onDragOver={onDragOver}
-          // onDrop={onDrop}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          style={{
-            width: `${props.graph.bounds.width}px`,
-            height: `${props.graph.bounds.height}px`,
-          }}
+    <section
+      classList={{ [styles.graph]: true, [styles.scroll]: dragType() === 'scroll' }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onWheel={onWheel}
+      id="graph"
+      ref={viewEl}
+    >
+      <div
+        class={styles.graphScrollContent}
+        style={{
+          width: `${graphBounds().width}px`,
+          height: `${graphBounds().height}px`,
+          left: `${graphOriginX()}px`,
+          top: `${graphOriginY()}px`,
+        }}
+      >
+        <Show when={selectionRect()}>
+          {rect => (
+            <div
+              class={styles.selectionRect}
+              style={{
+                left: `${rect.xMin}px`,
+                top: `${rect.yMin}px`,
+                width: `${rect.width}px`,
+                height: `${rect.height}px`,
+              }}
+            />
+          )}
+        </Show>
+        <For each={props.graph.nodes}>
+          {node => (
+            <NodeRendition node={node} graph={props.graph} selectionRect={selectionRect()} />
+          )}
+        </For>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ position: 'absolute', left: graphBounds().xMin, top: graphBounds().yMin }}
+          viewBox={viewBox()}
+          class="connectors"
+          width={graphBounds().width}
+          height={graphBounds().height}
         >
-          <For each={props.graph.nodes}>
-            {node => <NodeRendition node={node} graph={props.graph} />}
+          <Show when={dragConnection.ts || dragConnection.te}>
+            <ConnectionRendition {...dragConnection} />
+          </Show>
+          <For each={connections()}>
+            {conn => (
+              <ConnectionRendition
+                onPointerDown={onConnectionPointerDown}
+                ts={conn.source}
+                te={conn.dest}
+              />
+            )}
           </For>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ position: 'absolute', left: '0', top: '0' }}
-            viewBox={viewBox()}
-            class="connectors"
-            width={props.graph.bounds.width}
-            height={props.graph.bounds.height}
-          >
-            <For each={connections()}>
-              {conn => (
-                <ConnectionRendition
-                  onPointerDown={onConnectionPointerDown}
-                  ts={conn.source}
-                  te={conn.dest}
-                />
-              )}
-            </For>
-            <Show when={dragConnection.ts || dragConnection.te}>
-              <ConnectionRendition {...dragConnection} />
-            </Show>
-          </svg>
-        </div>
+        </svg>
       </div>
       <CompassRose onScroll={onChangeScroll} onScrollToCenter={scrollToCenter} />
     </section>

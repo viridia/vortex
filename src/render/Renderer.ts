@@ -158,7 +158,7 @@ export class Renderer {
   public renderNode(node: GraphNode): void {
     const program: WebGLProgram = node.glResources?.program;
     if (program) {
-      this.executeShaderProgram(node, gl => {
+      this.executeShaderProgram(node, () => {
         // Set the uniforms for this node and all upstream nodes.
         this.setShaderUniforms(node, program);
         for (const input of node.operator.inputs) {
@@ -166,7 +166,7 @@ export class Renderer {
             this.setShaderInputBufferUniforms(node, program, input.id);
           }
         }
-        node.visitUpstreamNodes((upstream, connection) => {
+        node.visitUpstreamNodes((upstream) => {
           this.setShaderUniforms(upstream, program);
           for (const input of upstream.operator.inputs) {
             if (input.buffered) {

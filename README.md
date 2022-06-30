@@ -13,7 +13,7 @@ The actual computation of the images is performed by the GPU using WebGL.
 ## Getting Started
 
 If you just want to run the application, go to the
-[https://github.com/viridia/vortex/releases/latest](Release) page and download the
+[https://github.com/viridia/vortex/releases](Release) page and download the
 appropriate installer for your platform.
 
 Note that the installers are not digitally signed (yet) so you'll have to jump through a few

@@ -12,9 +12,11 @@ import { settingsManager } from './Settings';
 import { getDefaultDir, setDefaultDir } from './lib/defaultDir';
 import path from 'path';
 import './global.scss';
+import { AboutDialog } from './About';
 
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());
+  const [openAbout, setOpenAbout] = createSignal(false);
 
   onMount(() => {
     settingsManager.initialize().then(async () => {
@@ -71,6 +73,11 @@ const App: Component = () => {
     const unlisten1 = appWindow.listen('tauri://menu', async ({ payload }) => {
       const gr = graph();
       switch (payload) {
+        case 'about': {
+          setOpenAbout(true);
+          break;
+        }
+
         case 'new': {
           if (gr.modified) {
             // Prompt save
@@ -177,6 +184,7 @@ const App: Component = () => {
         <GraphView graph={graph()} />
         <PropertyPanel graph={graph()} />
       </section>
+      <AboutDialog open={openAbout()} onClose={() => setOpenAbout(false)} />
     </main>
   );
 };

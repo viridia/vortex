@@ -2,7 +2,7 @@ import { DataType } from '../operators';
 import { Expr, assign, refLocal } from './Expr';
 import { GraphNode } from '../graph';
 import { byName } from '../operators/library/shaders';
-import { transform } from './pass/transform';
+import { lowerExprs } from './pass/transform';
 import { generate } from './pass/generate';
 import { printToString } from './codefmt/print';
 
@@ -66,11 +66,11 @@ export class ShaderAssembly {
 
   private get body(): string {
     // Get expressions
-    const result = this.node.outputCode;
+    const stmts: Expr[] = [];
+    const result = this.node.readOutputValue(this.node.outputs[0], stmts);
 
     // Transform expessions
-    const stmts: Expr[] = [];
-    transform(assign(refLocal('fragColor', DataType.VEC4), result), stmts);
+    lowerExprs(assign(refLocal('fragColor', DataType.VEC4), result), stmts);
 
     return printToString(stmts.map(generate), {
       maxWidth: 100,

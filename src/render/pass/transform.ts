@@ -11,7 +11,8 @@ interface CachedSignal {
   expr: Expr;
 }
 
-export function transform(expr: Expr, out: Expr[]): void {
+/** Lower high-level expression tree to lower-level primitives. */
+export function lowerExprs(expr: Expr, out: Expr[]): void {
   let tmpVarIndex = 1;
   const tmpVarMap = new Map<Symbol, Expr>();
   const signalCache: {
@@ -49,6 +50,13 @@ export function transform(expr: Expr, out: Expr[]): void {
       case 'typecast':
       case 'literal':
         return expr;
+
+      case 'deflocal': {
+        return {
+          ...expr,
+          init: visit(expr.init)
+        }
+      }
 
       case 'reftexcoords': {
         if (textureCoords.kind === 'reftexcoords') {
@@ -91,7 +99,7 @@ export function transform(expr: Expr, out: Expr[]): void {
             signalCache[signalId] = signalList;
           }
 
-          const result = outputNode.outputCode;
+          const result = outputNode.readOutputValue(outputTerminal, out);
           const saveTextureCoords = textureCoords;
           textureCoords = fragCoords;
           const retVal = visit(result);
@@ -117,7 +125,7 @@ export function transform(expr: Expr, out: Expr[]): void {
           return castIfNeeded(tmpVarRef, type);
         }
 
-        const result = outputNode.outputCode;
+        const result = outputNode.readOutputValue(outputTerminal, out);
         const saveTextureCoords = textureCoords;
         textureCoords = fragCoords;
         const retVal = castIfNeeded(visit(result), type);

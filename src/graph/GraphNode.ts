@@ -73,7 +73,7 @@ export class GraphNode {
 
     // Position input terminals.
     if (operator.inputs) {
-      const spacing = Math.min(36, 120 / operator.inputs.length);
+      const spacing = Math.min(36, 100 / operator.inputs.length);
       let y = Math.floor((120 - operator.inputs.length * spacing) / 2);
       operator.inputs.forEach(input => {
         this.inputs.push(new InputTerminal(this, input.name, input.id, -9, y));
@@ -83,7 +83,7 @@ export class GraphNode {
 
     // Position output terminals.
     if (operator.outputs) {
-      const spacing = Math.min(36, 120 / operator.outputs.length);
+      const spacing = Math.min(36, 100 / operator.outputs.length);
       let y = Math.floor((120 - operator.outputs.length * spacing) / 2);
       (operator.outputs || []).forEach(output => {
         this.outputs.push(new OutputTerminal(this, output.name, output.id, 93, y));
@@ -290,8 +290,8 @@ export class GraphNode {
 
   /** Return an expression graph representing this node's output. */
   // @computed
-  public get outputCode(): Expr {
-    return this.operator.getCode(this);
+  public readOutputValue(terminal: OutputTerminal, prologue: Expr[]): Expr {
+    return this.operator.getCode(this, terminal, prologue);
   }
 
   setError(errorMessage: string | null) {

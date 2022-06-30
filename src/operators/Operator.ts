@@ -1,5 +1,5 @@
 import { Expr } from '../render/Expr';
-import { GraphNode } from '../graph';
+import { GraphNode, OutputTerminal } from '../graph';
 import { Input } from './Input';
 import { Output } from './Output';
 import { Parameter } from './Parameter';
@@ -34,7 +34,7 @@ export abstract class Operator {
   }
 
   /** Return the expression for this node. */
-  public getCode(node: GraphNode): Expr {
+  public getCode(node: GraphNode, terminal: OutputTerminal, prologue: Expr[]): Expr {
     return vec4(0, 0, 0, 1);
   }
 

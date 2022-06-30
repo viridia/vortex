@@ -2,6 +2,7 @@
 
 ## Bugs
 
+* Document scrolled when loading image.
 * Better highlighting of selected color stop.
 
 ## QoL
@@ -14,9 +15,11 @@
 * Save export path in node.
 * Click on an operator node to get docs on that operator.
 * Digitally sign installers.
+* Save current graph in local storage (preserve on reload)
 
 ## Node types
 
+* Color Key
 * Threshold
 * Curve
 * Hi pass filter

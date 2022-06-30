@@ -25,12 +25,14 @@ export interface BaseExpr {
   type: DataType;
 }
 
+/** An assignment expression. */
 export interface AssignExpr extends BaseExpr {
   kind: 'assign';
   left: Expr;
   right: Expr;
 }
 
+/** Constructor for assignment expression. */
 export const assign = (left: Expr, right: Expr): AssignExpr => ({
   type: left.type,
   kind: 'assign',
@@ -38,12 +40,14 @@ export const assign = (left: Expr, right: Expr): AssignExpr => ({
   right,
 });
 
+/** An function call expression. */
 export interface CallExpr extends BaseExpr {
   kind: 'call';
   callable: FunctionDefn;
   args: ExprOrLiteral[];
 }
 
+/** Constructor for function call expression. */
 export const call = (callable: FunctionDefn, ...args: ExprOrLiteral[]): CallExpr => ({
   kind: 'call',
   args,
@@ -82,18 +86,21 @@ export const defLocal = (
   init,
 });
 
+/** Reading a local variable. */
 export interface RefLocalExpr extends BaseExpr {
   kind: 'reflocal';
   name: string;
   type: DataType;
 }
 
+/** Constructor for reading a local variable. */
 export const refLocal = (name: string, type: DataType): RefLocalExpr => ({
   kind: 'reflocal',
   name,
   type,
 });
 
+/** Reading a node parameter. */
 export interface RefUniformExpr extends BaseExpr {
   kind: 'refuniform';
   name: string;
@@ -101,6 +108,7 @@ export interface RefUniformExpr extends BaseExpr {
   node: GraphNode;
 }
 
+/** Constructor for reading a node parameter. */
 export const refUniform = (name: string, type: DataType, node: GraphNode): RefUniformExpr => ({
   kind: 'refuniform',
   name,
@@ -108,6 +116,7 @@ export const refUniform = (name: string, type: DataType, node: GraphNode): RefUn
   node,
 });
 
+/** Reading an input terminal. */
 export interface RefInputExpr extends BaseExpr {
   kind: 'refinput';
   name: string;
@@ -116,6 +125,7 @@ export interface RefInputExpr extends BaseExpr {
   uv: Expr;
 }
 
+/** Constructor for reading from an input terminal. */
 export const refInput = (
   name: string,
   type: DataType,

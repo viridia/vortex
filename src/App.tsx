@@ -14,9 +14,20 @@ import path from 'path';
 import './global.scss';
 import { AboutDialog } from './About';
 
+const LOCAL_STORAGE_KEY = 'current-graph';
+
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());
   const [openAbout, setOpenAbout] = createSignal(false);
+
+  const json = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (json) {
+    try {
+      graph().fromJs(JSON.parse(json));
+    } catch (e) {
+      console.error(e); // Swallow error.
+    }
+  }
 
   onMount(() => {
     settingsManager.initialize().then(async () => {
@@ -67,6 +78,7 @@ const App: Component = () => {
     const gr = graph();
     await writeFile(gr.path, JSON.stringify(gr.asJson));
     gr.modified = false;
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gr.toJs()));
   }
 
   createEffect(() => {
@@ -84,6 +96,7 @@ const App: Component = () => {
           }
           gr.dispose();
           setGraph(new Graph());
+          localStorage.removeItem(LOCAL_STORAGE_KEY);
           break;
         }
 
@@ -110,6 +123,7 @@ const App: Component = () => {
               const g = new Graph();
               g.path = filePath;
               g.fromJs(parsed);
+              localStorage.setItem(LOCAL_STORAGE_KEY, json);
               setGraph(g);
               gr.dispose();
             }
@@ -138,11 +152,13 @@ const App: Component = () => {
 
         case 'undo': {
           gr.undo();
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gr.toJs()));
           break;
         }
 
         case 'redo': {
           gr.redo();
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gr.toJs()));
           break;
         }
 
@@ -175,6 +191,18 @@ const App: Component = () => {
       (await unlisten3)();
       (await unlisten4)();
     });
+  });
+
+  // Maintain a copy of the graph in local storage in case we reload the page.
+  createEffect(() => {
+    const gr = graph();
+    if (gr) {
+      onCleanup(
+        gr.subscribe('changed', () => {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gr.toJs()));
+        })
+      );
+    }
   });
 
   return (

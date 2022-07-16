@@ -44,6 +44,10 @@ class Blur extends Operator {
   public readonly description = `
 Gaussian blur operator.
 
+### Parameters:
+
+* **Radius** is the radius of the blur.
+
 **Caution**: This operator is fairly slow. There are faster blur algorithms, however this one is
 designed to scale with the size of the input, which requires a large amount of sampling.
 `;

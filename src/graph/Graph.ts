@@ -18,6 +18,7 @@ export interface GraphJson {
 
 export interface GraphEvents {
   add: Operator;
+  changed: boolean;
 }
 
 export interface NodesToMove {
@@ -351,6 +352,7 @@ export class Graph extends EventSource<GraphEvents> {
     if (this.undoStack.length > 100) {
       this.undoStack.splice(0, this.undoStack.length - 100);
     }
+    this.emit('changed', true);
   }
 
   private applyUndoAction(action: UndoAction): UndoAction {

@@ -1,0 +1,142 @@
+import { DataType, Input, Operator, Output, Parameter } from '..';
+import {
+  Expr,
+  defineFn,
+  refTexCoords,
+  refUniform,
+  add,
+  getAttr,
+  typeCast,
+} from '../../render/Expr';
+import { vec2, vec4 } from '../../render/glIntrinsics';
+import { GraphNode } from '../../graph';
+import { makeFunctionType } from '../FunctionDefn';
+
+const IMPORTS = new Set(['shadowblur']);
+
+export const shadowblur = defineFn({
+  name: 'shadowblur',
+  type: makeFunctionType({
+    result: DataType.VEC4,
+    args: [DataType.IMAGE, DataType.FLOAT, DataType.VEC2],
+  }),
+});
+
+enum SourceKey {
+  LUMINANCE = 0,
+  ALPHA = 1,
+}
+
+class DropShadow extends Operator {
+  public readonly inputs: Input[] = [
+    {
+      id: 'in',
+      name: 'In',
+      type: DataType.VEC4,
+      buffered: true,
+    },
+  ];
+  public readonly outputs: Output[] = [
+    {
+      id: 'out',
+      name: 'Out',
+      type: DataType.VEC4,
+    },
+  ];
+  public readonly params: Parameter[] = [
+    {
+      id: 'radius',
+      name: 'Radius',
+      type: DataType.FLOAT,
+      min: 0,
+      max: 0.1,
+      precision: 3,
+      default: 0.05,
+    },
+    {
+      id: 'offset_x',
+      name: 'Offset X',
+      type: DataType.FLOAT,
+      min: -0.02,
+      max: 0.02,
+      increment: 0.001,
+      precision: 4,
+      default: 0,
+    },
+    {
+      id: 'offset_y',
+      name: 'Offset Y',
+      type: DataType.FLOAT,
+      min: -0.02,
+      max: 0.02,
+      increment: 0.001,
+      precision: 4,
+      default: 0,
+    },
+    {
+      id: 'key',
+      name: 'Source Key',
+      type: DataType.INTEGER,
+      enumVals: [
+        { name: 'Luminance', value: 0 },
+        { name: 'Alpha', value: 1 },
+      ],
+      default: 0,
+      pre: true,
+    },
+    {
+      id: 'color',
+      name: 'Shadow Color',
+      type: DataType.VEC4,
+      editor: 'color',
+      default: [0.0, 0.0, 0.0, 1.0],
+    },
+  ];
+
+  public readonly description = `
+Renders a drop shadow.
+
+* **Radius** is the radius of the shadow as a fraction of the image size.
+* **Offset X** and **Offset Y** offset the shadow.
+* **Source Key** determines whether the shadow is masked by the input luminance or alpha channel.
+* **Shadow color** determines the color of the shadow.
+
+**Caution**: This operator is fairly slow. There are faster blur algorithms, however this one is
+designed to scale with the size of the input, which requires a large amount of sampling.
+`;
+
+  constructor() {
+    super('filter', 'Drop Shadow', 'filter_drop_shadow');
+  }
+
+  public getImports(_node: GraphNode): Set<string> {
+    return IMPORTS;
+  }
+
+  public getCode(node: GraphNode): Expr {
+    if (!node.getInputTerminal('in').connection) {
+      return vec4(0.5, 0.5, 0.5, 1);
+    }
+
+    const key = node.paramValues.get('key') as SourceKey;
+    const shadow = shadowblur(
+      refUniform('in', DataType.IMAGE, node),
+      refUniform('radius', DataType.FLOAT, node),
+      add(
+        refTexCoords(),
+        vec2(
+          refUniform('offset_x', DataType.FLOAT, node),
+          refUniform('offset_y', DataType.FLOAT, node)
+        ),
+        DataType.VEC2
+      )
+    );
+
+    return vec4(
+      getAttr(refUniform('color', DataType.VEC4, node), 'rgb', DataType.VEC3),
+      typeCast(shadow, DataType.FLOAT)
+    );
+  }
+}
+
+export default new DropShadow();

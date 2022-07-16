@@ -41,7 +41,7 @@ export const NodeRendition: Component<Props> = props => {
       <div class={styles.body}>
         <div class={styles.header}>{node.name}</div>
         <div class={styles.preview}>
-          <RenderedImage width={80} height={80} node={node} />
+          <RenderedImage width={64} height={64} node={node} />
         </div>
         {node.error && <div class={styles.errorBadge}>!</div>}
       </div>

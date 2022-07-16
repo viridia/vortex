@@ -287,7 +287,7 @@ export function defineFn(defn: FunctionDefn): CallFactory {
     return {
       kind: 'call',
       args,
-      type: DataType.OTHER,
+      type: defn.type.length === 1 ? defn.type[0].result : DataType.OTHER,
       callable: defn,
     };
   }

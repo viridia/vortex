@@ -19,6 +19,7 @@ import periodicNoise from './periodic-noise.glsl';
 import permute from './permute.glsl';
 import pnoise from './pnoise.glsl';
 import pworley from './pworley.glsl';
+import shadowblur from './shadowblur.glsl';
 import steppers from './steppers.glsl';
 import triangles from './triangles.glsl';
 import waves from './waves.glsl';
@@ -48,6 +49,7 @@ export const byName: { [name: string]: string } = {
   permute,
   pnoise,
   pworley,
+  shadowblur,
   steppers,
   triangles,
   waves,

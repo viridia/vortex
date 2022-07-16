@@ -47,9 +47,14 @@ export function lowerExprs(expr: Expr, out: Expr[]): void {
 
       case 'reflocal':
       case 'refuniform':
-      case 'typecast':
       case 'literal':
         return expr;
+
+      case 'typecast':
+        return {
+          ...expr,
+          value: visit(expr.value)
+        }
 
       case 'deflocal': {
         return {

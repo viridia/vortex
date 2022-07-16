@@ -11,7 +11,6 @@ vec4 blur(sampler2D src, float radius, vec2 uv) {
     for (float y = 0.0; y < radius; y += d.y) {
       float dist = sqrt(x * x + y * y) * oneOverRadius;
       float s = smoothstep(1.0, 0.0, dist);
-      max(0.0, 1.0 - sqrt(x * x + y * y) * oneOverRadius);
       if (x == 0.0) { // Center column samples the same texel twice
         s *= 0.5;
       }

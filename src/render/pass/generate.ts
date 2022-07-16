@@ -109,6 +109,7 @@ export function generate(expr: Expr): OutputChunk {
     }
 
     default:
+      console.error(`Not implemented: ${expr.kind}`);
       console.warn(JSON.stringify(expr, null, 2));
       throw new Error(`Not implemented: ${expr.kind}`);
   }

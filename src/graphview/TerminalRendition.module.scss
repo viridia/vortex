@@ -2,15 +2,16 @@
   position: absolute;
   display: flex;
   align-items: center;
-  width: 15px;
-  height: 30px;
+  width: 18px;
+  height: 16px;
   cursor: cell;
   z-index: 12;
+  // outline: 1px solid yellow;
 }
 
 .disc {
-  width: 8px;
-  height: 12px;
+  width: 6px;
+  height: 10px;
   border: 2px solid black;
   background-image: linear-gradient(0deg, rgb(109, 109, 173) 0%, #557 20%, rgb(170, 170, 170) 100%);
   z-index: 5;
@@ -24,6 +25,7 @@
   .in > & {
     border-radius: 4px 0 0 4px;
     border-right-width: 0;
+    margin-left: 10px;
   }
 
   .out > & {
@@ -38,10 +40,10 @@
   text-shadow: 1px 2px 1px black;
 
   .in > & {
-    right: 20px;
+    right: 14px;
   }
 
   .out > & {
-    left: 14px;
+    left: 12px;
   }
 }

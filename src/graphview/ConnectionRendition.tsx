@@ -18,10 +18,10 @@ export interface ConnectionProps {
 export const ConnectionRendition: Component<ConnectionProps> = props => {
   const path = createMemo(() => {
     const { ts, xs, ys, te, xe, ye } = props;
-    const x0: number = ts ? ts.x + ts.node.x + 10 : xs || 0;
-    const y0: number = ts ? ts.y + ts.node.y + 15 : ys || 0;
+    const x0: number = ts ? ts.x + ts.node.x + 8 : xs || 0;
+    const y0: number = ts ? ts.y + ts.node.y + 8 : ys || 0;
     const x1: number = te ? te.x + te.node.x + 10 : xe || 0;
-    const y1: number = te ? te.y + te.node.y + 15 : ye || 0;
+    const y1: number = te ? te.y + te.node.y + 8 : ye || 0;
     return [
       `M${x0} ${y0}`,
       `L${x0 + 5} ${y0}`,

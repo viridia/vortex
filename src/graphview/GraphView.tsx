@@ -470,12 +470,19 @@ export const GraphView: Component<Props> = props => {
       gr.subscribe('insert', nodeProto => {
         const gr = props.graph;
         const rect = viewEl.getBoundingClientRect();
-        const node = new GraphNode(nodeProto.operator, gr.nextId());
-        node.x = quantize(nodeProto.x - gr.xOrigin - rect.left);
-        node.y = quantize(nodeProto.y - gr.yOrigin - rect.top);
-        node.selected = true;
-        gr.clearSelection();
-        gr.addNode(node);
+        if (
+          nodeProto.x >= rect.left &&
+          nodeProto.x < rect.right &&
+          nodeProto.y >= rect.top &&
+          nodeProto.y < rect.bottom
+        ) {
+          const node = new GraphNode(nodeProto.operator, gr.nextId());
+          node.x = quantize(nodeProto.x - gr.xOrigin - rect.left);
+          node.y = quantize(nodeProto.y - gr.yOrigin - rect.top);
+          node.selected = true;
+          gr.clearSelection();
+          gr.addNode(node);
+          }
       })
     );
   });

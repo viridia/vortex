@@ -6,18 +6,20 @@ import { OutputTerminal } from './OutputTerminal';
 import { Terminal } from './Terminal';
 import { makeObservable } from '../lib/makeObservable';
 import { batch, untrack } from 'solid-js';
-import { renderer } from '../render/Renderer';
 import { EventSource } from './EventSource';
 import { AddDeleteAction, ChangeParamAction, ConnectAction, UndoAction, UndoStack } from './Undo';
 import { registry } from '../operators/Registry';
 
 export interface GraphJson {
+  xOrigin: number;
+  yOrigin: number;
   nodes: GraphNodeJson[];
   connections: ConnectionJson[];
 }
 
 export interface GraphEvents {
   add: Operator;
+  insert: GraphNode;
   changed: boolean;
 }
 
@@ -34,6 +36,9 @@ export class Graph extends EventSource<GraphEvents> {
   public nodes: ReadonlyArray<GraphNode> = [];
   public modified = false;
 
+  public xOrigin = 0;
+  public yOrigin = 0;
+
   private nodeCount = 0;
   private undoStack: UndoStack = [];
   private redoStack: UndoStack = [];
@@ -41,12 +46,12 @@ export class Graph extends EventSource<GraphEvents> {
 
   constructor() {
     super();
-    makeObservable(this, ['path', 'modified', 'nodes']);
+    makeObservable(this, ['path', 'modified', 'nodes', 'xOrigin', 'yOrigin']);
     this.nodes = [];
   }
 
   public dispose() {
-    this.nodes.forEach(node => node.dispose(renderer));
+    this.nodes.forEach(node => node.dispose());
   }
 
   /** Add a node to the list. */
@@ -547,11 +552,17 @@ export class Graph extends EventSource<GraphEvents> {
         });
       });
     });
-    return { nodes, connections };
+    return { nodes, connections, xOrigin: this.xOrigin, yOrigin: this.yOrigin };
   }
 
   public fromJs(json: GraphJson) {
     this.dispose();
+    if (typeof json.xOrigin === 'number') {
+      this.xOrigin = json.xOrigin;
+    }
+    if (typeof json.yOrigin === 'number') {
+      this.yOrigin = json.yOrigin;
+    }
     const nodes = untrack(() =>
       json.nodes.map(node => {
         const n = new GraphNode(registry.get(node.operator), node.id);

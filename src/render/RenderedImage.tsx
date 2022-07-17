@@ -16,9 +16,9 @@ export const RenderedImage = (props: Props) => {
 
   createEffect(() => {
     const node = props.node;
-    if (node) {
+    if (node && node.id >= 0) {
       if (node.deleted) {
-        node.dispose(renderer);
+        node.dispose();
       } else {
         const context = canvas?.getContext('2d');
         if (context && node.source.length > 0) {

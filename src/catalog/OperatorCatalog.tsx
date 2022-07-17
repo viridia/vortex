@@ -8,9 +8,10 @@ interface Props {
   selected: () => Operator | null;
   onSelect: (id: string) => void;
   onAdd: () => void;
+  onStartDrag: (x: number, y: number, pointerId: number) => void;
 }
 
-export const OperatorCatalog: Component<Props> = ({ selected, onSelect, onAdd }) => {
+export const OperatorCatalog: Component<Props> = ({ selected, onSelect, onAdd, onStartDrag }) => {
   const opList = registry.list.map(
     (op: Operator) => [op.group, op.name, op] as [string, string, Operator]
   );
@@ -25,9 +26,12 @@ export const OperatorCatalog: Component<Props> = ({ selected, onSelect, onAdd })
             <div
               classList={{ [styles.row]: true, [styles.selected]: isSelected(op) }}
               data-id={`${op.id}`}
-              onClick={e => {
-                e.preventDefault();
-                onSelect(op.id);
+              onPointerDown={e => {
+                if (e.button === 0) {
+                  e.preventDefault();
+                  onSelect(op.id);
+                  onStartDrag(e.x, e.y, e.pointerId);
+                }
               }}
               onDblClick={e => {
                 onAdd();

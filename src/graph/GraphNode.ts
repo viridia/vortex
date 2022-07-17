@@ -4,7 +4,7 @@ import { Expr } from '../render/Expr';
 import { GLResources } from '../render/GLResources';
 import { InputTerminal } from './InputTerminal';
 import { OutputTerminal } from './OutputTerminal';
-import { Renderer } from '../render/Renderer';
+import { renderer, Renderer } from '../render/Renderer';
 import { ShaderAssembly } from '../render/ShaderAssembly';
 import { Terminal } from './Terminal';
 import { equalSet } from '../lib/comparators';
@@ -121,7 +121,8 @@ export class GraphNode {
   }
 
   // Release any GL resources we were holding on to.
-  public dispose(renderer: Renderer) {
+  public dispose() {
+    console.log('dispose');
     this.deleted = true;
     renderer.deleteShaderResources(this.glResources);
     renderer.deleteTextureResources(this.glResources);

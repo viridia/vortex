@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
+import { Component, createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js';
 import styles from './App.module.scss';
 import { appWindow, PhysicalPosition, PhysicalSize } from '@tauri-apps/api/window';
 import { CatalogPanel } from './catalog/CatalogPanel';
@@ -13,12 +13,15 @@ import { getDefaultDir, setDefaultDir } from './lib/defaultDir';
 import path from 'path';
 import './global.scss';
 import { AboutDialog } from './About';
+import { useDragNode } from './catalog/useDragNode';
+import { NodeRendition } from './graphview/NodeRendition';
 
 const LOCAL_STORAGE_KEY = 'current-graph';
 
 const App: Component = () => {
   const [graph, setGraph] = createSignal(new Graph());
   const [openAbout, setOpenAbout] = createSignal(false);
+  let graphElt: HTMLDivElement;
 
   const json = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (json) {
@@ -47,6 +50,10 @@ const App: Component = () => {
     });
   });
 
+  const { dragNode, onStartDrag, onCancelDrag, ...dragMethods } = useDragNode({
+    graph,
+  });
+
   document.addEventListener('keypress', e => {
     switch (e.key) {
       case 'Delete':
@@ -54,6 +61,15 @@ const App: Component = () => {
         e.preventDefault();
         e.stopPropagation();
         graph().deleteSelection();
+        break;
+
+      case 'Escape':
+        if (dragNode()) {
+          e.preventDefault();
+          e.stopPropagation();
+          onCancelDrag();
+        }
+        break;
     }
   });
 
@@ -207,9 +223,12 @@ const App: Component = () => {
 
   return (
     <main class={styles.main}>
-      <section class={styles.appBody}>
-        <CatalogPanel graph={graph()} />
-        <GraphView graph={graph()} />
+      <section {...dragMethods} class={styles.appBody}>
+        <Show when={dragNode()}>
+          {node => <NodeRendition node={node} graph={graph()} selectionRect={null} />}
+        </Show>
+        <CatalogPanel graph={graph()} onStartDrag={onStartDrag} />
+        <GraphView graph={graph()} ref={graphElt} />
         <PropertyPanel graph={graph()} />
       </section>
       <AboutDialog open={openAbout()} onClose={() => setOpenAbout(false)} />

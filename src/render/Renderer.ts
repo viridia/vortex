@@ -376,7 +376,7 @@ export class Renderer {
 
   public deleteShaderResources(resources: GLResources | undefined) {
     const gl = this.gl;
-    if (resources) {
+    if (resources && gl) {
       if (resources.program) {
         gl.deleteProgram(resources.program);
         resources.program = null;
@@ -390,7 +390,7 @@ export class Renderer {
 
   public deleteTextureResources(resources: GLResources | undefined) {
     const gl = this.gl;
-    if (resources) {
+    if (resources && gl) {
       resources.textures.forEach(texture => gl.deleteTexture(texture));
       resources.textures.clear();
     }

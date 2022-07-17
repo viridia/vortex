@@ -19,7 +19,7 @@
 }
 
 .header {
-  border-bottom: 1px solid #888;
+  border-bottom: 1px solid #aaa;
   padding: 3px 3px 2px 3px;
   overflow-x: hidden;
   white-space: nowrap;
@@ -30,7 +30,7 @@
   height: 69px;
   > canvas {
     margin: 2px 3px;
-    background-color: #ddd;
+    background-color: #999;
   }
 }
 

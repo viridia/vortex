@@ -19,3 +19,11 @@
 .addButton {
   width: 10rem;
 }
+
+.dragNode {
+  border: 1px solid yellow;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  z-index: 2;
+}

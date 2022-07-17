@@ -49,8 +49,8 @@ export const GraphView: Component<Props> = props => {
   const [dragType, setDragType] = createSignal<DragType>(null);
   const [dxScroll, setDXScroll] = createSignal(0);
   const [dyScroll, setDYScroll] = createSignal(0);
-  const [graphOriginX, setGraphOriginX] = createSignal(0);
-  const [graphOriginY, setGraphOriginY] = createSignal(0);
+  // const [graphOriginX, setGraphOriginX] = createSignal(0);
+  // const [graphOriginY, setGraphOriginY] = createSignal(0);
   const [selectionRect, setSelectionRect] = createSignal<Bounds | null>(null);
   const [dragConnection, setDragConnection] = createStore<ConnectionProps>({
     ts: null,
@@ -98,13 +98,10 @@ export const GraphView: Component<Props> = props => {
 
   const onChangeScroll = (dx: number, dy: number) => {
     batch(() => {
+      const gr = props.graph;
       const limits = scrollLimits();
-      setGraphOriginX(x => {
-        return Math.min(limits.xMax, Math.max(limits.xMin, x + dx));
-      });
-      setGraphOriginY(y => {
-        return Math.min(limits.yMax, Math.max(limits.yMin, y + dy));
-      });
+      gr.xOrigin = Math.min(limits.xMax, Math.max(limits.xMin, gr.xOrigin + dx));
+      gr.yOrigin = Math.min(limits.yMax, Math.max(limits.yMin, gr.yOrigin + dy));
     });
   };
 
@@ -156,9 +153,10 @@ export const GraphView: Component<Props> = props => {
   });
 
   const scrollToCenter = () => {
+    const gr = props.graph;
     const bounds = graphBounds();
-    setGraphOriginX((viewEl.offsetWidth - bounds.width) * 0.5 - bounds.xMin);
-    setGraphOriginY((viewEl.offsetHeight - bounds.height) * 0.5 - bounds.yMin);
+    gr.xOrigin = (viewEl.offsetWidth - bounds.width) * 0.5 - bounds.xMin;
+    gr.yOrigin = (viewEl.offsetHeight - bounds.height) * 0.5 - bounds.yMin;
   };
 
   // const onDragEnter: JSX.EventHandler<HTMLElement, DragEvent> = e => {
@@ -221,8 +219,8 @@ export const GraphView: Component<Props> = props => {
             yFrom: node.y,
             xTo: node.x,
             yTo: node.y,
-            dragXOffset: e.clientX - rect.left - node.x - graphOriginX(),
-            dragYOffset: e.clientY - rect.top - node.y - graphOriginY(),
+            dragXOffset: e.clientX - rect.left - node.x - graph.xOrigin,
+            dragYOffset: e.clientY - rect.top - node.y - graph.yOrigin,
           }));
           pointerId = e.pointerId;
           e.currentTarget.setPointerCapture(e.pointerId);
@@ -230,8 +228,8 @@ export const GraphView: Component<Props> = props => {
         }
       } else if (entity instanceof AbstractTerminal) {
         const rect = e.currentTarget.getBoundingClientRect();
-        dragX = e.clientX - rect.left - graphOriginX();
-        dragY = e.clientY - rect.top - graphOriginY();
+        dragX = e.clientX - rect.left - graph.xOrigin;
+        dragY = e.clientY - rect.top - graph.yOrigin;
         setActiveTerminal(null);
         if (isOutputTerminal(entity)) {
           dragSource = entity;
@@ -258,8 +256,8 @@ export const GraphView: Component<Props> = props => {
     } else {
       graph.clearSelection();
       const rect = e.currentTarget.getBoundingClientRect();
-      anchorX = dragX = e.clientX - rect.left - graphOriginX();
-      anchorY = dragY = e.clientY - rect.top - graphOriginY();
+      anchorX = dragX = e.clientX - rect.left - graph.xOrigin;
+      anchorY = dragY = e.clientY - rect.top - graph.yOrigin;
       setSelectionRect(new Bounds(dragX, dragY, dragX, dragY));
       setDragType('select');
       e.currentTarget.setPointerCapture(e.pointerId);
@@ -271,8 +269,9 @@ export const GraphView: Component<Props> = props => {
     const rect = e.currentTarget.getBoundingClientRect();
     batch(() => {
       if (dragType() === 'select') {
-        dragX = e.clientX - rect.left - graphOriginX();
-        dragY = e.clientY - rect.top - graphOriginY();
+        const gr = props.graph;
+        dragX = e.clientX - rect.left - gr.xOrigin;
+        dragY = e.clientY - rect.top - gr.yOrigin;
         setSelectionRect(
           new Bounds(
             Math.min(dragX, anchorX),
@@ -285,8 +284,8 @@ export const GraphView: Component<Props> = props => {
         onChangeScroll(e.movementX, e.movementY);
       } else if (dragType() === 'input' || dragType() === 'output') {
         const gr = props.graph;
-        dragX = e.offsetX - graphOriginX();
-        dragY = e.offsetY - graphOriginY();
+        dragX = e.offsetX - gr.xOrigin;
+        dragY = e.offsetY - gr.yOrigin;
         const entity = pickGraphEntity(e.clientX, e.clientY);
         if (dragType() === 'input') {
           dragSink =
@@ -319,11 +318,11 @@ export const GraphView: Component<Props> = props => {
           ye: dragY,
           pending: !dragSource || !dragSink,
         });
-
       } else if (dragNodes.length > 0) {
+        const gr = props.graph;
         dragNodes.forEach(mv => {
-          mv.xTo = mv.node.x = quantize(e.clientX - rect.left - graphOriginX() - mv.dragXOffset);
-          mv.yTo = mv.node.y = quantize(e.clientY - rect.top - graphOriginY() - mv.dragYOffset);
+          mv.xTo = mv.node.x = quantize(e.clientX - rect.left - gr.xOrigin - mv.dragXOffset);
+          mv.yTo = mv.node.y = quantize(e.clientY - rect.top - gr.yOrigin - mv.dragYOffset);
         });
       }
 
@@ -460,8 +459,20 @@ export const GraphView: Component<Props> = props => {
         const gr = props.graph;
         const node = new GraphNode(op, gr.nextId());
         const rect = viewEl.getBoundingClientRect();
-        node.x = quantize(rect.width * 0.5 - graphOriginX() - 45);
-        node.y = quantize(rect.height * 0.5 - graphOriginY() - 60);
+        node.x = quantize(rect.width * 0.5 - gr.xOrigin - 35);
+        node.y = quantize(rect.height * 0.5 - gr.yOrigin - 45);
+        node.selected = true;
+        gr.clearSelection();
+        gr.addNode(node);
+      })
+    );
+    onCleanup(
+      gr.subscribe('insert', nodeProto => {
+        const gr = props.graph;
+        const rect = viewEl.getBoundingClientRect();
+        const node = new GraphNode(nodeProto.operator, gr.nextId());
+        node.x = quantize(nodeProto.x - gr.xOrigin - rect.left);
+        node.y = quantize(nodeProto.y - gr.yOrigin - rect.top);
         node.selected = true;
         gr.clearSelection();
         gr.addNode(node);
@@ -512,8 +523,8 @@ export const GraphView: Component<Props> = props => {
         style={{
           width: `${graphBounds().width}px`,
           height: `${graphBounds().height}px`,
-          left: `${graphOriginX()}px`,
-          top: `${graphOriginY()}px`,
+          left: `${props.graph.xOrigin}px`,
+          top: `${props.graph.yOrigin}px`,
         }}
       >
         <Show when={selectionRect()}>
